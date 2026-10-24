@@ -311,6 +311,71 @@ Bu yüzden Aşama 3'ün merkezinde **yürünebilir, yaşayan bir şehir** var. E
   - Lokanta: 12:00–23:00.
   - Banka, emlak, eşya ve galeri: 09:00–21:00.
 
+## 9.4 Kullanıcı geri bildirimleri (bekleyen liste)
+| # | Geri bildirim | Ne zaman | Durum |
+|---|---|---|---|
+| 1 | "Yaşayan dünya hissi yok, yürüyemiyoruz." (v0.3.0) | Aşama 3 | ✅ yapıldı (v0.4.0) |
+| 2 | "Ev vb. yapıların görüntüleri çok kötü, iyi bir hava vermiyor." (v0.4.0) | Aşama 4'ün ilk işi | bekliyor |
+| 3 | "M'ye basınca açılan bir harita olsun." (v0.4.0) | Aşama 4'ün ilk işi | bekliyor |
+
+## 9.5 Aşama 4 planı (💡 onay bekliyor)
+
+### 0. Önce geri bildirimler
+
+**Binaların görünümü (#2)**
+- Şu anki binalar Kenney'nin "Roguelike Modern City" paketinden geliyor. Bu paket aslında yukarıdan bakışlı ve binaları karo karo kurulmuş bloklar gibi duruyor, ev hissi vermiyor.
+- Kenney'nin aynı tarzda ve yine ücretsiz (CC0) başka şehir paketleri var. Bunları indirip aynı sokağı her biriyle kuracağım, yan yana bir karşılaştırma ekranında göstereceğim. Seçim senin olacak.
+- Kural aynı kalıyor: tek bir sanatçının tutarlı tarzı, yapay zekâ görseli yok.
+- Yeni paket karakterlere de uyuyorsa, yürürken adım atan karakterler de gelebilir. Kesin değil, paketlere bakınca söyleyeceğim.
+
+**M haritası (#3)**
+- M tuşuna basınca, ya da dünyadaki "Harita" düğmesine tıklayınca, kâğıt tarzında bir harita açılır.
+- Haritada Kalvar'ın bölgeleri, mekânlar (kafe, banka, evin vb.) ve senin konumun işaretli olur.
+- Bir mekâna tıklayınca açılış saatleri ve bilgisi görünür. Araban varsa oraya gidersin.
+- Ülke haritası da olur: Carceria, Sinistra ve Odexia, şehirleriyle birlikte. Gidilebilen şehirler işaretli olur.
+
+### 1. Carceria City (başkent)
+- Otobüs (₡6, 40 dakika) ya da arabayla gidilen ikinci yürünebilir şehir.
+- **Bölgeler:**
+  - Merkez meydan: Bakanlık binası, eski merkez cezaevi, kafeler.
+  - Stadyum çevresi: Merkez Stadı ve Gardiyanlar Sahası.
+  - Eğlence sokağı: lokantalar, bir bar, gece hayatı.
+- Deplasman maçları başkentteyse maç günü buraya gidilir.
+
+### 2. Komşu ligler
+- **Sinistra Ligi ve Odexia Ligi:** 12'şer kulüp. Kulüpler, oyuncular ve teknik direktörleri üretilir. Maçları her hafta arka planda oynanır.
+- **Ekranlar:** Lig ekranında üç ülkenin puan tablosu, fikstürü ve gol krallığı görünür.
+- **Transfer:** Komşu liglerden oyuncu alınabilir, onlar da bizden alır.
+- Kulüp isimlerini ben öneririm (💡), sen değiştirirsin.
+
+### 3. Kupalar
+- **Carceria Kupası:** Carceria'nın 10 kulübü, eleme usulü, çarşamba akşamları. Kalvar ilk sezondan oynar.
+- **Antlaşma Kupası:** 1932 Antlaşması'nın adını taşıyan, üç ülkenin en iyi 8 kulübünün katıldığı kupa.
+  - Kimler katılır: Carceria'dan 2, Sinistra'dan 3, Odexia'dan 3 kulüp.
+  - Çarşamba geceleri oynanır.
+  - Sinistra–Odexia eşleşmesi çıkarsa gazete ve taraftarlar o maçı "sınır maçı" diye konuşur.
+- **Katılım:** Kalvar, Carceria Ligi'ni ilk iki sırada bitirirse gelecek sezon Antlaşma Kupası'na katılır.
+
+### 4. Menajer kariyerleri
+- **Her kulübün adı olan bir teknik direktörü var.** Kovulurlar, başka kulübe geçerler, rekabetler oluşur. Gazete bunları yazar.
+- **İş teklifleri:** İtibarın yükselince başka kulüplerden teklif gelir. Bunlara Sinistra ve Odexia kulüpleri de dahil.
+- **Kulüp değiştirmek:** Sinistralı bir menajerin Odexia'da çalışmasına taraftarlar, basın ve komşular farklı tepki verir.
+- **Kovulursan:** Bir süre işsiz kalırsın, ilanlara başvurursun. Kariyer bitmek zorunda değil.
+
+### 5. Demir Masa
+- **Gizli bir hikâye katmanı:** Futbolun arka tarafında bahis ve şike çeviren bir çevre.
+- **İlk işaretler:** Bir hakem, garip bir bahis oranı, bir oyuncuna gelen para teklifi.
+- **Senin kararların:** Görmezden gelirsin, Mira Halvor'la birlikte araştırırsın ya da bir teklifi kabul edersin. Her yolun bedeli ve sonucu var.
+- CARCERIA'daki Demir Masa'nın bugüne uzanan kolu olarak işlenir. Kanon önerisi olduğu için kullanıcının onayı gerekir.
+
+### Sıra
+1. Bina görünümü (önce karşılaştırma ve senin seçimin).
+2. M haritası.
+3. Carceria City.
+4. Kupalar ve komşu ligler.
+5. Menajer kariyerleri.
+6. Demir Masa.
+
 ## 10. Açık sorular
 
 1. ✅ Grafik: Kenney Roguelike serisi (şehir, iç mekân, karakterler), CC0.

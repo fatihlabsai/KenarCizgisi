@@ -146,4 +146,8 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
 - 💡 Bu aşamada eklenenler:
   - İsimler: Ovalı Lokantası (Dora), Kalvar Bankası (Bay Tamm), Varga Emlak (Ilse Varga), Petri Eşya (Petri usta), Kask Oto Galeri (Rado Kask), araba markaları (Ova, Ferrano, Tyrenna).
   - **Kanon önerisi:** CARCERIA'nın 1982 gardiyanları Jovan Petri ve Lena Sorova bugün Lale Sokak'ta yaşayan emekliler. Kullanıcının onayı gerekiyor.
-- Sıradaki adım: kullanıcının yürünebilir şehri denemesi, sonra Aşama 4 (komşu ligler, Antlaşma Kupası, menajer kariyerleri, Demir Masa).
+- Kullanıcının v0.4.0 geri bildirimi:
+  - "Ev vb. yapıların görüntüleri çok kötü."
+  - "M'ye basınca açılan bir harita olsun."
+  - İkisi de Aşama 4'ün ilk işi olarak listede (TASARIM.md 9.4).
+- Sıradaki adım: Aşama 4 planının onayı (TASARIM.md 9.5).
