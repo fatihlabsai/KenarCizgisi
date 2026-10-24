@@ -1,7 +1,7 @@
 {
   "name": "kenarcizgisi",
   "productName": "KenarCizgisi",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Piksel sanatlı futbol menajerliği oyunu",
   "author": "fatihlabsai",
   "main": "main.js",

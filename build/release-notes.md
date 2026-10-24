@@ -1,29 +1,24 @@
-## Kenar Çizgisi v0.4.0 — Kalvar
+## Kenar Çizgisi v0.4.1 — Yeni Kalvar ve harita
 
-Akşamları artık Kalvar'da yürüyorsun. Şehir yaşıyor, para da gerçekten bir işe yarıyor.
+Kalvar baştan çizildi, bir de harita geldi.
 
-**Yürünebilir şehir**
-- Oklar ya da WASD ile yürü, fareyle bir yere tıkla. Bir şeyin yanındayken E'ye bas.
-- Dört bölge: Lale Sokak, Çarşı, Avlu Stadı önü, Ova kenarı. Kenardan yürüyerek bir bölgeden ötekine geçilir.
-- İç mekânlar: evin, Gözcü Kafe, Ovalı Lokantası, banka, emlakçı, eşya dükkânı, oto galeri.
-- Akşam hava kararır, lambalar ve pencereler yanar. Kışın yağmur yağabilir.
+**Yeni görünüm**
+- Sokaklar yeni bir grafik paketiyle kuruldu. Binaların tuğla cepheleri, pencereleri ve düz çatıları var, dükkânlarda vitrin ve tente var.
+- Yolda yaya geçitleri ve kesik orta çizgi var. Kaldırımda lambalar, banklar, posta kutusu.
+- Çarşı meydanında havuz ve pazar tezgâhları var.
+- Avlu Stadı'nın çatısından saha görünüyor.
+- Ova kenarında meyve bahçesi, gölet ve korular var.
+- Ekimde ve kasımda ağaçlar sararıyor.
+- Kasabalılar adım atarak yürüyor. Arabalar şeritlerinde doğru yöne gidiyor.
+- Sabahları görünen sokak da artık yürüdüğün Lale Sokak.
 
-**Yaşayan sokaklar**
-- Kasabalılar, taraftarlar ve kendi oyuncuların sokakta dolaşır. Onlarla konuşabilirsin.
-- Taraftarlar maç sonucuna göre, oyuncular morallerine göre konuşur.
-- Gazeteci Mira Halvor'la aran iyileşince sana rakibin eksiklerini fısıldar.
-- Kafede, çarşıda ya da ovada biriyle tanışabilirsin. Gerisi size kalmış.
+**Harita (M)**
+- M'ye ya da alttaki "Harita (M)" düğmesine bas.
+- Kalvar sekmesinde dört bölge, mekânlar ve senin yerin işaretli.
+- Bir mekâna tıklayınca açılış saatleri, içeride kimin olduğu, evlerin kirası ve fiyatı çıkar.
+- Araban varsa akşamları oraya arabayla gidersin (10 dakika), bisikletle 20 dakika.
+- İkinci sekmede Carceria, Sinistra ve Odexia, şehirleri ve Carceria Ligi kulüpleriyle.
+- Harita açıkken saat durur.
 
-**Akşamlar**
-- Akşam 18:00'de başlar, pazarları sabahtan. Her işin bir süresi var.
-- Kafede çay, lokantada yemek, bir oyuncuyu yemeğe çağırmak.
-- Yatağa yatınca gün biter. Geç kalırsan ertesi gün yorgun olursun. Evdeki aynadan görünüşünü değiştirebilirsin.
-
-**Para ve hayat**
-- Ev kirala ya da satın al. Taşınınca evin içi de değişir.
-- Mobilya al, evinde görünsün.
-- Bisiklet ya da araba al. Araba kapının önünde durur, bölgeler arasında hızlı götürür.
-- Banka: mevduat ve kredi.
-- Yatırım: kiralık daire, arsa, yazlık, Gözcü Kafe'ye ortaklık.
-- "Hayatım" ekranında paran, evin, yatırımların, itibarın ve tanıdıkların.
-- Gazete senin hayatını da yazar.
+**Düzeltme**
+- Satılık bir evin kapısında "kiralık" yazıyordu.
