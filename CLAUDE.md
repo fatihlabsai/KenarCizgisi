@@ -35,7 +35,8 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
 - Kayıt: `%APPDATA%\KenarCizgisi\saves\kayit1..3.json` ve `ayarlar.json`. `KAYIT_SURUMU = 1`.
 - Oyun 1 Temmuz 2026 Çarşamba başlar. Maaş her ayın 1'inde yatar. Başlangıçta para ₡1.840, maaş ₡2.400.
 - Masaüstü: Electron 33.2.1 + electron-builder 25.1.8 (NSIS). `main.js` ve `preload.js` CARCERIA'dan uyarlandı.
-- Otomatik güncelleme kodu hazır ama kapalı. Açmak için ayrı ve herkese açık bir sürümler deposu gerekiyor (CARCERIA'daki `carceria-surumler` gibi).
+- **Otomatik güncelleme** `fatihlabsai/KenarCizgisi_surumler` deposundan geliyor. Kurulu oyun 4 saniye sonra ve her 4 saatte bir denetliyor.
+  - Yeni sürüm iner ve kurulmaya hazır olunca ana menüde "Şimdi kur" düğmesi çıkıyor.
 - Geliştirme sürümünü açmak için `OYNA.bat`. Kurulum dosyası için `npx electron-builder --win nsis`, çıktısı `dist\KenarCizgisi Setup <sürüm>.exe`.
 - **Electron testi:** `--remote-debugging-port` ile açılıp CDP üzerinden sayfada kod çalıştırılabilir.
   - `--user-data-dir` kayıt klasörünü değiştirmiyor. Testte yalnızca kullanılmayan bir yuvaya yazıp sonra silin.
@@ -67,7 +68,25 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
 - **İki bilgisayar kuralı (CARCERIA'daki gibi):** Oturum başında `git pull`, iş bitince commit ve `git push`.
 - Commit mesajlarının sonuna şunu ekle: `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`
 
+## Yayın süreci (sadece kullanıcı "yayına al" deyince)
+- Kod deposu `fatihlabsai/KenarCizgisi` (özel). Yayın deposu `fatihlabsai/KenarCizgisi_surumler` (herkese açık, sadece kurulum dosyaları ve README).
+- **Adımlar:**
+  1. `package.json` sürümünü artır.
+  2. `build/release-notes.md` dosyasını Türkçe yaz.
+  3. Gizli anahtar taraması yap: `git grep --cached -nIE "github_pat_|ghp_|BEGIN .*PRIVATE KEY"`
+  4. Commit ve push.
+  5. GH_TOKEN'ı Windows kullanıcı değişkeninden süreç içinde oku ve derleyip yayınla:
+     ```powershell
+     $env:GH_TOKEN = [Environment]::GetEnvironmentVariable('GH_TOKEN','User'); npx electron-builder --win nsis --publish always; Remove-Item Env:GH_TOKEN
+     ```
+     Token asla ekrana yazdırılmaz.
+  6. Yayın sayfasının gövdesini notlarla GitHub API üzerinden PATCH'le.
+  7. `https://github.com/fatihlabsai/KenarCizgisi_surumler/releases/latest/download/latest.yml` adresinin yeni sürümü gösterdiğini doğrula.
+- GH_TOKEN, CARCERIA ile aynı ince ayarlı (fine-grained) anahtar. İzin listesinde iki sürümler deposu da var, Contents izni Read and write.
+- Boş bir depoda sürüm oluşturulamıyor ("Repository is empty"). Bu yüzden yayın deposuna ilk kayıt olarak README eklendi.
+
 ## Durum (24.10.2026)
+- **Yayında olan son sürüm v0.1.1 (ilk sürüm).** Kullanıcının bu sürümü GitHub'dan bir kez elle kurması gerekiyor, çünkü önceki yerel derlemelerde güncelleme ayarı yoktu.
 - Tasarım belgesi yazıldı. Şehir ve kulüp isimleri konuldu (💡 öneri).
 - Grafik denemesi kullanıcı tarafından onaylandı: arabalar düzeltildi, ev sadeleştirildi.
 - **Aşama 0 bitti (v0.1.0):**
