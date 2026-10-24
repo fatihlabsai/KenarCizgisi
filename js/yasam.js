@@ -149,7 +149,7 @@ const YASAM = (() => {
     if (h.startsWith("ev:")) {
       if (S.ev.id === h) return bolgeGir(h, "giris");
       const ev = EKONOMI.ev(h);
-      return mesaj(k.ad, ev ? `Kapı kilitli. ${ev.ad} ${ev.satilik ? "satılık" : "kiralık"}. Varga Emlak'a sorabilirsin.` : "Kapı kilitli.");
+      return mesaj(k.ad, ev ? `Kapı kilitli. ${ev.ad} ${ev.satis ? "satılık" : "kiralık"}. Varga Emlak'a sorabilirsin.` : "Kapı kilitli.");
     }
     if (h.startsWith("ic:")) {
       const [ac, kap] = ACIK[h] || [0, 24];
@@ -358,20 +358,17 @@ const YASAM = (() => {
       <p class="soluk">${d.tur === "pazar" ? "Pazar, izin günü." : "Akşam, günün geri kalanı senin."} Oklar ya da WASD ile yürü, fareyle bir yere tıkla. Bir şeyin yanındayken E'ye bas.</p>
       ${dlg}
       ${evde ? `<p>Evindesin. Yatağa gidip uyuyabilirsin.</p>` : `<p class="soluk">Evin: ${kacir(S.ev.adres)}. 23:00'dan sonra eve dönmezsen ertesi gün yorgun olursun.</p>`}
-      <div class="dugme-dizi">${S.hayat.araba ? `<button class="dugme ikincil" id="y-harita">Arabayla git…</button>` : ""}<button class="dugme ikincil" id="y-hayat">Hayatım</button></div>`);
+      <div class="dugme-dizi"><button class="dugme ikincil" id="y-harita">Harita (M)</button><button class="dugme ikincil" id="y-hayat">Hayatım</button></div>`);
     if (diyalog) {
       document.querySelectorAll("#gundem [data-dlg]").forEach((btn) => { btn.onclick = () => { const s = diyalog.secenekler[+btn.dataset.dlg]; diyalog = null; s.fn(); if (!diyalog) panelCiz(); }; });
       $("dlg-kapat").onclick = () => { diyalog = null; panelCiz(); };
     }
     const hb = $("y-hayat"); if (hb) hb.onclick = () => EKONOMI.hayatim();
-    const hr = $("y-harita"); if (hr) hr.onclick = arabaylaGit;
+    const hr = $("y-harita"); if (hr) hr.onclick = () => HARITA.ac();
   }
 
-  // Arabası olan, bölgeler arasında 10 dakikada gider
-  function arabaylaGit() {
-    const yerler = [["lale", "Lale Sokak", "sagGiris"], ["carsi", "Çarşı", "solGiris"], ["avlu", "Avlu Stadı", "solGiris"], ["ova", "Ova kenarı", "sagGiris"]];
-    soru("Nereye?", "Araba kapının önünde.", yerler.map(([id, ad, n]) => ({ yazi: ad, fn: () => { saatEkle(10); bolgeGir(id, n); } })));
-  }
+  // Haritadan araçla gitmek: yol süresi kadar saat ilerler
+  function git(bolgeId, konum, dk) { saatEkle(dk); bolgeGir(bolgeId, konum); }
 
   // Bölgeye girerken tanışma ihtimali
   const asilBolgeGir = bolgeGir;
@@ -385,5 +382,5 @@ const YASAM = (() => {
     }
   };
 
-  return { basla, devam, bitir, uyu, TANIDIK, saatYazi, panelCiz };
+  return { basla, devam, bitir, uyu, git, TANIDIK, ACIK, saatYazi, panelCiz };
 })();

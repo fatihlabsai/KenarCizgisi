@@ -26,7 +26,7 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
 ## Teknik
 - HTML5 Canvas (sahneler) + HTML/CSS (menüler), derleme adımı olmayan vanilla JS.
   - `js/` altındaki klasik scriptler index.html'de sırayla yüklenir ve ortak global kapsamı paylaşır.
-  - Sıra: kaynak, karakter, sahne-antrenman, sahne-sokak, sahne-daire, depo, cizici, arayuz, oyun, ana.
+  - Sıra index.html'de. Bağımlılıkları olanlar sonda: ... ekonomi, yasam, harita, oyun, ana.
 - Dosyaların görevleri:
   - `veri.js`: isim listeleri (ülkelere göre), 10 kulüp, hazırlık maçları, dizilişler, oyun anlayışları.
   - `dunya.js`: kadro üretimi (kulüp başına 18 oyuncu), oyuncu gücü `guc(o, mevki)`, en iyi 11 seçimi.
@@ -53,6 +53,7 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
   - `yasam.js`: akşam ve pazar akışı.
     - Saat: 1 gerçek saniye 2 oyun dakikası. Akşam 18:00'de, pazar 10:00'da evden başlar. 01:00'de zorla eve dönülür.
     - Mekânların açılış saatleri, kapılar, tanıdıklar ve konuşmalar, tanışma, uyku, ayna (görünüş değiştirme).
+  - `harita.js`: M haritası (TAM paneli). Kalvar sekmesi dört bölgenin `tamResim` görüntüsü, mekân etiketleri, menajerin yeri (kırmızı nokta), mekân bilgisi ve açılış saatleri. Akşam dünyadayken araçla gitme (araba 10, bisiklet 20 dakika, `YASAM.git`). Ülke sekmesi: Sinistra, Carceria (pusula düzeninde şehirler, ligdeki kulüpler, yatırımlar), Odexia. M tuşu, alt çubuktaki ve akşam panelindeki "Harita (M)" düğmesi açar. Harita açıkken saat işlemez.
   - `ekonomi.js`: evler (kirala/satın al/taşın), mobilya (evde görünür), araba (bölgeler arası hızlı geçiş), banka (mevduat %0,4, kredi %1,5), yatırımlar (Tessel daire, Mirov arsa ve yazlık, kafe ortaklığı), ay başı gelir-gider, Hayatım ekranı.
   - `gazete.js`: pazar günü çıkan Sınır Postası.
   - `cizici.js`: etkin sahneyi kendi çözünürlüğünde (varsayılan 320×192) çizip tam sayı katıyla büyütür. "kapla" ana menü, "sigdir" oyun içi. `balon()` ve `ustCiz()` keskin yazı için.
@@ -162,5 +163,7 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
   - "M'ye basınca açılan bir harita olsun."
   - İkisi de Aşama 4'ün ilk işi olarak listede (TASARIM.md 9.4).
 - **Aşama 4 başladı (plan onaylandı, TASARIM.md 9.5):**
-  - 1. iş bitti: Kalvar RPG Urban Pack ile yeniden kuruldu (henüz yayınlanmadı).
-  - Sıradaki iş: M haritası.
+  - 1. iş bitti: Kalvar RPG Urban Pack ile yeniden kuruldu.
+  - 2. iş bitti: M haritası (Kalvar ve ülke). Eski "Arabayla git…" listesinin yerini aldı.
+  - İkisi de henüz yayınlanmadı.
+  - Sıradaki iş: Carceria City (TASARIM.md 9.5, madde 1).

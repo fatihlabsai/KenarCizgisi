@@ -319,6 +319,7 @@ $("mektup-geri").onclick = () => { S = null; gorunusAdimi(); };
 $("mektup-imza").onclick = imzala;
 $("oyun-menu").onclick = duraklat;
 $("oyun-kadro").onclick = () => KADRO.listeAc(null);
+$("oyun-harita").onclick = () => HARITA.ac();
 $("oyun-gazeteler").onclick = gazeteArsivi;
 $("oyun-lig").onclick = () => LIG.ekran();
 $("oyun-transfer").onclick = () => TRANSFER.ekran();

@@ -316,7 +316,7 @@ Bu yüzden Aşama 3'ün merkezinde **yürünebilir, yaşayan bir şehir** var. E
 |---|---|---|---|
 | 1 | "Yaşayan dünya hissi yok, yürüyemiyoruz." (v0.3.0) | Aşama 3 | ✅ yapıldı (v0.4.0) |
 | 2 | "Ev vb. yapıların görüntüleri çok kötü, iyi bir hava vermiyor." (v0.4.0) | Aşama 4'ün ilk işi | ✅ yapıldı (RPG Urban Pack seçildi) |
-| 3 | "M'ye basınca açılan bir harita olsun." (v0.4.0) | Aşama 4'ün ilk işi | bekliyor |
+| 3 | "M'ye basınca açılan bir harita olsun." (v0.4.0) | Aşama 4'ün ilk işi | ✅ yapıldı |
 
 ## 9.5 Aşama 4 planı (💡 onay bekliyor)
 
@@ -343,6 +343,11 @@ Bu yüzden Aşama 3'ün merkezinde **yürünebilir, yaşayan bir şehir** var. E
 - Haritada Kalvar'ın bölgeleri, mekânlar (kafe, banka, evin vb.) ve senin konumun işaretli olur.
 - Bir mekâna tıklayınca açılış saatleri ve bilgisi görünür. Araban varsa oraya gidersin.
 - Ülke haritası da olur: Carceria, Sinistra ve Odexia, şehirleriyle birlikte. Gidilebilen şehirler işaretli olur.
+- **Yapıldı:**
+  - Kalvar sekmesi: dört bölge yürüme sırasıyla (Ova kenarı, Lale Sokak, Çarşı, Avlu). Mekân etiketleri, senin yerin, bölgelerin kenar geçişleri.
+  - Bir mekâna tıklayınca: ne olduğu, açılış saatleri ve şu an açık mı, içeride kim var, evlerin kirası ve fiyatı. Araban ya da bisikletin varsa "git" düğmesi.
+  - Ülke sekmesi: üç ülke yan yana. Carceria'nın şehirleri yönlerine göre dizili, her şehirde ligdeki kulüpler ve yatırımın varsa işareti.
+  - 💡 Şehirlerin ülke içindeki yerleri 3.1'deki notlardan çıkarıldı. Şimdilik sadece Kalvar'da dolaşılabiliyor.
 
 ### 1. Carceria City (başkent)
 - Otobüs (₡6, 40 dakika) ya da arabayla gidilen ikinci yürünebilir şehir.
