@@ -181,7 +181,7 @@ Her gün **gündüz kulüpte**, **akşam hayatında** geçer. Akşamları seçim
 |---|---|---|
 | **0. İskelet** ✅ | Proje, pencere, ana menü, kayıt, `.exe` derleme | Boş ama açılan bir oyun |
 | **1. İlk dilim** ✅ | 1 kulüp, 1 hafta: antrenman sahnesi → 2D maç → maaş → daire → gazete | Oyunun hissi görülür |
-| **2. Sezon** | Carceria Ligi, fikstür, puan tablosu, kadro ve taktik, basit transfer | Bir sezon baştan sona oynanır |
+| **2. Sezon** | Carceria Ligi, fikstür, puan tablosu, görsel taktik ekranı, transfer, sözleşmeler | Bir sezon baştan sona oynanır |
 | **3. Hayat** | Ev ve araba, yatırımlar, şehir haritası, ilişkiler, enerji/stres/itibar | Para gerçekten bir işe yarar |
 | **4. Dünya** | Komşu ligler, Antlaşma Kupası, menajer kariyerleri, Demir Masa | Dünya yaşamaya başlar |
 | **5. Cila** | Ses, müzik, denge, seslendirme | Yayına hazır |
@@ -200,6 +200,46 @@ Her gün **gündüz kulüpte**, **akşam hayatında** geçer. Akşamları seçim
   - Gözcü Kafe: ₡14. Stres azalır, dedikodu duyulur. Rakibin dizilişi böyle öğrenilebilir.
   - Bir oyuncuyu yemeğe çağır: ₡60, oyuncunun morali yükselir.
 - **Yeni isimler:** Başkan Ilian Dorsa, muhabir Mira Halvor, Gözcü Kafe ve sahibi Mavro.
+
+## 9.2 Aşama 2 planı (💡 onay bekliyor)
+
+### Taktik ekranı ✅ (kullanıcı istedi)
+- **Saha görünümü:** Yukarıdan bakılan sahada, seçilen dizilişe göre 11 oyuncu durur. Her oyuncunun forması, numarası ve adı görünür.
+- **Sürükle-bırak:**
+  - Sahadaki iki oyuncunun yerini değiştirmek için birini diğerinin üstüne bırak.
+  - Yedeklerden birini sahaya almak için oyuncunun üstüne bırak.
+- **Uyarılar:**
+  - Kendi mevkisi dışında oynayan oyuncu kırmızı işaretlenir.
+  - Kondisyonu düşük olan oyuncunun altında bir çubuk görünür.
+- **Diziliş:** Değiştirince oyuncular sahada yeni yerlerine kayar.
+- **Takım talimatları:** Maç motorunu gerçekten etkiler.
+  - Savunma hattı: geride / normal / önde. Önde oynamak rakibi sıkıştırır ama arkaya top yeme riskini artırır.
+  - Pres: az / normal / yoğun. Yoğun pres top kazandırır ama yorar.
+  - Pas: kısa / karışık / uzun.
+  - Genişlik: dar / normal / geniş.
+- **Görevler:** Kaptan, penaltıcı, korner ve frikik kullanıcısı.
+- **Rakip analizi:** Rakibin bilinen dizilişi küçük bir sahada gösterilir. Bilinmiyorsa "?" yazar.
+- **Maçta da aynı ekran:** Devre arasında ve "Taktik" düğmesinde bu ekran açılır.
+
+### Lig
+- **Format:** 10 takım, 3 devre, 27 hafta. Faroe Adaları ligi de böyle oynanıyor, küçük ülkede çok maç demek. 3/1/0 puan.
+- **Takvim:** 29 Ağustos'ta başlar. 19 Aralık–9 Ocak arası kış arası. Mart sonunda biter.
+- **Sonuçlar:** Şampiyon Antlaşma Kupası'na katılır (Aşama 4). Son sıradaki takım küme düşmemek için baraj oynar.
+- **Ekranlar:** Puan tablosu, fikstür, haftanın sonuçları, gol krallığı.
+
+### Transfer ve sözleşmeler
+- **Pencereler:** Transfer dönemi 31 Ağustos'ta ve ocak ayında açık.
+- **Teklif:** Başka kulübün oyuncusuna bonservis teklifi verilir. Kulüp kabul ederse oyuncuyla maaş ve süre konuşulur.
+- **Serbest oyuncular:** Bonservissiz, sadece maaşla alınabilen oyuncular listesi.
+- **Sözleşmeler:** Her oyuncunun maaşı ve bitiş tarihi var. Süresi bitmek üzere olanla uzatma görüşmesi yapılır, uzatılmazsa sezon sonunda ayrılır.
+- **Kulüp bütçesi:** Transfer bütçesi ve maaş bütçesi ayrı tutulur. Yönetim bunları sezon başında belirler.
+- **Diğer kulüpler de transfer yapar.** Kulis haberleri gerçek olaylardan beslenir.
+
+### Sezon boyunca
+- **Sakatlıklar:** Maçta ve yoğun antrenmanda olabilir. Süresi gün olarak gösterilir.
+- **Kartlar:** Sarı kart birikirse ve kırmızı kart görülürse ceza var.
+- **Yönetim güveni:** Sezon başında bir hedef konur. Güven çok düşerse kovulma riski doğar.
+- **Kira:** Kulübün ödediği ilk üç ay bitince, Kasım'dan itibaren Lale Sokak'ın kirası (₡620) maaştan düşer.
 
 ## 10. Açık sorular
 
