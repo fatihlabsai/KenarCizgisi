@@ -1,28 +1,34 @@
-## Kenar Çizgisi v0.2.0 — İlk hafta
+## Kenar Çizgisi v0.3.0 — Sezon
 
-Kalvar Spor'daki ilk haftan artık oynanabiliyor. Kariyer 27 Temmuz Pazartesi başlıyor, ilk hazırlık maçı 1 Ağustos Cumartesi'de Avlu'da.
+Carceria Ligi başladı. Artık bir sezonu baştan sona oynayıp bir sonrakine geçebilirsin.
 
-**Antrenman (Pazartesi–Perşembe)**
-- 6 tür: pas ve rondo, bitiricilik, savunma hattı, duran top, kondisyon, dinlenme.
-- Seçtiğin çalışma sahada kendi oyuncularınla oynanıyor, sonunda rapor geliyor: öne çıkanlar, gelişenler, kondisyon.
-- Gençler daha hızlı gelişir. Yoğun antrenman oyuncuları yorar.
+**Taktik ekranı**
+- Oyuncuların sahada dizilişe göre görünüyor: forma, numara, ad, kondisyon, görev rozetleri.
+- Sürükle-bırak ya da sırayla iki oyuncuya tıklayarak yer değiştir. Yedekten sahaya da aynı şekilde.
+- Takım talimatları: savunma hattı, pres, pas, genişlik. Maçı gerçekten etkiler.
+- Görevler: kaptan, penaltıcı, korner ve frikik kullanıcısı.
+- Rakip analizi: Gözcü Kafe'de dizilişini öğrendiysen sahada görünür.
+- Aynı ekran devre arasında ve maç sırasında da açılır.
 
-**Cuma**
-- Basın toplantısı: Sınır Postası'nın sorusuna verdiğin cevap moral, taraftar ve yönetimi etkiler.
-- Kadro ve taktik: 4 diziliş, 3 oyun anlayışı, her mevki için oyuncu seçimi.
+**Carceria Ligi**
+- 10 takım, 3 devre, 27 hafta. 29 Ağustos'ta başlar, aralık sonunda kış arası, mart sonunda biter.
+- Puan tablosu, fikstür, gol krallığı (alttaki "Lig" düğmesi).
+- Kart cezaları ve sakatlıklar.
+- Son sıradaki takım baraj oynar. Sezon sonunda yaş, emeklilik, sözleşmesi bitenler ve altyapıdan gelen gençlerle yeni sezon başlar.
 
-**Cumartesi: 2D maç**
-- 22 oyuncu sahada. Önemli anlar canlandırılıyor, skor tabelası ve olay akışı var.
-- Kenardan müdahale: taktik, 3 oyuncu değişikliği, her yarıda bir kez bağırmak.
-- Hız ×1 / ×2 / ×4, devre arası, "Sonuca geç". Maç sonunda oyuncu puanları.
+**Transfer ve sözleşmeler**
+- Transfer dönemi yazın ve ocakta açık.
+- Teklif ver, karşı teklifi değerlendir, oyuncunun menajeriyle maaş ve süre pazarlığı yap.
+- Serbest oyuncular, oyuncuların için gelen teklifler, kulüpler arası transferler.
+- Sözleşmesi biten oyuncular için hatırlatma, oyuncu kartından uzatma.
 
-**Pazar: Sınır Postası**
-- Manşet, maçın hikâyesi, basın toplantısında söylediğin söz, diğer maçlar, kulis, şehirden haberler.
-
-**Akşamlar**
-- Evde dinlen, Gözcü Kafe'ye in (dedikodu, rakibin dizilişini öğrenebilirsin) ya da bir oyuncuyu yemeğe çağır.
-- Menajerin enerjisi ve stresi üst çubukta.
+**Yönetim**
+- Sezon başında Başkan Dorsa'yla hedef ve bütçe toplantısı.
+- Sonuçlar yönetimin güvenini değiştirir. Güven çok düşerse kovulabilirsin.
+- Hedef tutarsa maaşın artar. Kasımdan itibaren kira maaştan düşer.
 
 **Diğer**
-- Kadro tablosu ve oyuncu kartı, gazete arşivi.
+- Penaltılar, duran toplar, maç içinde talimat değişikliği.
+- Gazete artık ligi, puan durumunu ve gerçek transferleri yazıyor.
+- Bütün oyuncular haftalık olarak gelişir ya da yaşlanır, antrenman bunun üstüne eklenir.
 - Eski kayıtlar yeni sürümde açılır.
