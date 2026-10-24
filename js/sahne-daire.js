@@ -51,7 +51,10 @@ const SAHNE_DAIRE = (() => {
     ctx.drawImage(menajer.img, menajer.x - 8, menajer.y - 8 - zip);
   }
 
-  function balon() { return { x: menajer.x, y: menajer.y - 12, metin: "Hesap: ₡1.840 · Maaşa 9 gün var" }; }
+  // Balondaki yazıyı oyun belirler (hesap, maaş günü gibi)
+  let metin = null;
+  const metinAyarla = (fn) => { metin = fn; };
+  function balon() { return metin ? { x: menajer.x, y: menajer.y - 12, metin: metin() } : null; }
 
-  return { ad: "Ev", alt: "Kalvar · Kiralık tek oda", kur, guncelle, ciz, balon };
+  return { ad: "Ev", alt: "Kalvar · Kiralık tek oda", kur, guncelle, ciz, balon, metinAyarla };
 })();

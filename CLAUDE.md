@@ -23,9 +23,23 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
 - 1932 suçlu anlaşması sürüyor ama artık zayıf.
 - Komşular: batıda Sinistra, doğuda Odexia. İki ülke arasında eski bir husumet var.
 
-## Teknik (planlanan)
-- HTML5 Canvas (sahneler) + HTML/CSS (menüler), derleme adımı olmayan JavaScript.
-- Electron ile Windows `.exe`. CARCERIA'nın kurulum ve yayın düzeni (`C:\Oyunlar\CARCERIA`) örnek alınır.
+## Teknik
+- HTML5 Canvas (sahneler) + HTML/CSS (menüler), derleme adımı olmayan vanilla JS.
+  - `js/` altındaki klasik scriptler index.html'de sırayla yüklenir ve ortak global kapsamı paylaşır.
+  - Sıra: kaynak, karakter, sahne-antrenman, sahne-sokak, sahne-daire, depo, cizici, arayuz, oyun, ana.
+- Dosyaların görevleri:
+  - `cizici.js`: etkin sahneyi 320×192'de çizip tam sayı katıyla büyütür. "kapla" kipi ana menü için, "sigdir" oyun ekranı için.
+  - `arayuz.js`: ekran geçişleri, açılır pencere, bildirim, `TARIH` ve `para()` yardımcıları.
+  - `oyun.js`: oyun durumu `S`, yeni kariyer, mektup, kayıt yuvaları (3 adet), duraklatma, ayarlar, ana menü.
+  - `depo.js`: kayıtlar. Masaüstünde `window.masaustu` köprüsünü, tarayıcıda localStorage'ı kullanır.
+- Kayıt: `%APPDATA%\KenarCizgisi\saves\kayit1..3.json` ve `ayarlar.json`. `KAYIT_SURUMU = 1`.
+- Oyun 1 Temmuz 2026 Çarşamba başlar. Maaş her ayın 1'inde yatar. Başlangıçta para ₡1.840, maaş ₡2.400.
+- Masaüstü: Electron 33.2.1 + electron-builder 25.1.8 (NSIS). `main.js` ve `preload.js` CARCERIA'dan uyarlandı.
+- Otomatik güncelleme kodu hazır ama kapalı. Açmak için ayrı ve herkese açık bir sürümler deposu gerekiyor (CARCERIA'daki `carceria-surumler` gibi).
+- Geliştirme sürümünü açmak için `OYNA.bat`. Kurulum dosyası için `npx electron-builder --win nsis`, çıktısı `dist\KenarCizgisi Setup <sürüm>.exe`.
+- **Electron testi:** `--remote-debugging-port` ile açılıp CDP üzerinden sayfada kod çalıştırılabilir.
+  - `--user-data-dir` kayıt klasörünü değiştirmiyor. Testte yalnızca kullanılmayan bir yuvaya yazıp sonra silin.
+  - İşlemi adıyla kapatırken dikkat: `electron.exe` CARCERIA'nın geliştirme sürümünü de kapatır.
 
 ## Grafikler
 - Kenney Roguelike serisinin üç sayfası `assets/kenney/` altında: `sehir.png`, `ic-mekan.png`, `karakter.png`.
@@ -49,5 +63,10 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
 
 ## Durum (24.10.2026)
 - Tasarım belgesi yazıldı. Şehir ve kulüp isimleri konuldu (💡 öneri).
-- Grafik denemesi (`index.html`) hazır: antrenman sahası, sokak ve ev. Kullanıcının bakıp onaylaması bekleniyor.
-- Sıradaki adım: Aşama 0, yani Electron, ana menü, kayıt ve `.exe`.
+- Grafik denemesi kullanıcı tarafından onaylandı: arabalar düzeltildi, ev sadeleştirildi.
+- **Aşama 0 bitti (v0.1.0):**
+  - Ana menü (arkada antrenman sahası), yeni kariyer (ad, soyad, memleket), Kalvar Spor'un teklif mektubu.
+  - Oyun ekranında ev, tarih ve para görünüyor. "Günü bitir" düğmesi var.
+  - 3 kayıt yuvası, duraklatma (Esc), ayarlar (tam ekran), kapanırken otomatik kayıt.
+  - Tarayıcıda ve Electron'da test edildi. Kurulum dosyası derlendi.
+- Sıradaki adım: Aşama 1 (ilk dilim).

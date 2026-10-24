@@ -3,30 +3,91 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>KENAR ÇİZGİSİ</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">
+  <title>Kenar Çizgisi</title>
+  <link rel="stylesheet" href="css/fonts.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <header class="ust">
-    <div class="logo">KENAR ÇİZGİSİ</div>
-    <nav id="sekmeler"></nav>
-  </header>
-  <main class="sahne-alani">
-    <div class="sahne-cerceve" id="cerceve">
-      <canvas id="tuval"></canvas>
-      <div class="sahne-baslik"><span id="baslik"></span><small id="altbaslik"></small></div>
+  <!-- Ana menü: arkada antrenman sahası oynar -->
+  <section id="ekran-menu" class="ekran">
+    <canvas class="tuval tuval-kapla" id="tuval-menu"></canvas>
+    <div class="menu-karartma"></div>
+    <div class="menu-icerik">
+      <h1 class="logo">KENAR ÇİZGİSİ</h1>
+      <p class="logo-alt">Carceria · 2026</p>
+      <nav class="menu-dugmeler" id="menu-dugmeler"></nav>
     </div>
-  </main>
-  <footer class="alt">Grafik denemesi · Grafikler: Kenney (kenney.nl, CC0) · 1, 2, 3 tuşlarıyla sahne değiştir</footer>
+    <p class="menu-surum" id="menu-surum"></p>
+  </section>
+
+  <!-- Yeni kariyer: menajerin adı ve memleketi -->
+  <section id="ekran-yeni" class="ekran kagit-ekran" hidden>
+    <div class="kagit">
+      <h2>Yeni kariyer</h2>
+      <p class="soluk">Kalvar Spor teknik direktör arıyor. Dosyanı doldur.</p>
+      <div class="alanlar">
+        <label>Adın <input id="yeni-ad" maxlength="18" autocomplete="off" spellcheck="false"></label>
+        <label>Soyadın <input id="yeni-soyad" maxlength="18" autocomplete="off" spellcheck="false"></label>
+      </div>
+      <p class="etiket">Nerelisin?</p>
+      <div class="memleketler" id="yeni-memleket"></div>
+      <p class="hata" id="yeni-hata"></p>
+      <div class="dugme-satiri">
+        <button class="dugme ikincil" id="yeni-geri">Geri</button>
+        <button class="dugme" id="yeni-devam">Başvur</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Kulübün teklif mektubu -->
+  <section id="ekran-mektup" class="ekran kagit-ekran" hidden>
+    <div class="kagit mektup">
+      <div class="mektup-ust"><span>KALVAR SPOR KULÜBÜ</span><span id="mektup-tarih"></span></div>
+      <div id="mektup-metin"></div>
+      <div class="dugme-satiri">
+        <button class="dugme ikincil" id="mektup-geri">Vazgeç</button>
+        <button class="dugme" id="mektup-imza">İmzala</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Oyun -->
+  <section id="ekran-oyun" class="ekran" hidden>
+    <header class="hud">
+      <div class="hud-kulup"><span class="forma-rengi"></span><span id="hud-kulup"></span></div>
+      <div class="hud-tarih" id="hud-tarih"></div>
+      <div class="hud-para" id="hud-para"></div>
+    </header>
+    <main class="oyun-orta">
+      <div class="sahne-cerceve"><canvas class="tuval" id="tuval-oyun"></canvas></div>
+    </main>
+    <footer class="hud-alt">
+      <span class="soluk" id="hud-yer"></span>
+      <div class="dugme-satiri">
+        <button class="dugme ikincil" id="oyun-menu">Menü (Esc)</button>
+        <button class="dugme" id="oyun-gun">Günü bitir ▸</button>
+      </div>
+    </footer>
+  </section>
+
+  <!-- Açılır pencere (kayıtlar, ayarlar, duraklatma) -->
+  <div id="pencere" class="pencere-arka" hidden>
+    <div class="pencere kagit">
+      <h2 id="pencere-baslik"></h2>
+      <div id="pencere-govde"></div>
+      <div class="dugme-satiri" id="pencere-dugmeler"></div>
+    </div>
+  </div>
 
   <script src="js/kaynak.js"></script>
   <script src="js/karakter.js"></script>
   <script src="js/sahne-antrenman.js"></script>
   <script src="js/sahne-sokak.js"></script>
   <script src="js/sahne-daire.js"></script>
-  <script src="js/deneme.js"></script>
+  <script src="js/depo.js"></script>
+  <script src="js/cizici.js"></script>
+  <script src="js/arayuz.js"></script>
+  <script src="js/oyun.js"></script>
+  <script src="js/ana.js"></script>
 </body>
 </html>

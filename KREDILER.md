@@ -18,9 +18,12 @@ Oyunda kullanılan her hazır grafiğin, sesin ve yazı tipinin kaynağı ve lis
 
 | Yazı tipi | Kaynak | Lisans |
 |---|---|---|
-| Jersey 10 | [Google Fonts](https://fonts.google.com/specimen/Jersey+10) | SIL OFL |
+| Jersey 10 (Sarah Cadigan-Fried) | [Google Fonts](https://fonts.google.com/specimen/Jersey+10), npm `@fontsource/jersey-10` | SIL OFL 1.1 |
 
-Jersey 10 deneme sahnesinde Google Fonts'tan yükleniyor. `.exe` sürümünde dosyası oyunun içine konacak.
+Yazı tipi dosyaları `fonts/` klasöründe, oyunla birlikte geliyor. Lisansı: `fonts/OFL-LICENSE.txt`.
+
+## Simge
+`build/icon.png`: Kenney karakter parçalarından (CC0) birleştirilmiş, Kalvar Spor formalı bir futbolcu.
 
 ## İncelenip kullanılmayanlar
 - **LimeZu Modern Interiors / Exteriors:** Ücretli olduğu için seçilmedi.

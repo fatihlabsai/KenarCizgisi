@@ -177,7 +177,7 @@ Her gün **gündüz kulüpte**, **akşam hayatında** geçer. Akşamları seçim
 
 | Aşama | İçerik | Bittiğinde |
 |---|---|---|
-| **0. İskelet** | Proje, pencere, ana menü, kayıt, `.exe` derleme | Boş ama açılan bir oyun |
+| **0. İskelet** ✅ | Proje, pencere, ana menü, kayıt, `.exe` derleme | Boş ama açılan bir oyun |
 | **1. İlk dilim** | 1 kulüp, 1 hafta: antrenman sahnesi → 2D maç → maaş → daire → gazete | Oyunun hissi görülür |
 | **2. Sezon** | Carceria Ligi, fikstür, puan tablosu, kadro ve taktik, basit transfer | Bir sezon baştan sona oynanır |
 | **3. Hayat** | Ev ve araba, yatırımlar, şehir haritası, ilişkiler, enerji/stres/itibar | Para gerçekten bir işe yarar |
