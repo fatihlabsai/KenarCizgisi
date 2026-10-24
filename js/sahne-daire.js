@@ -54,7 +54,8 @@ const SAHNE_DAIRE = (() => {
   // Balondaki yazıyı oyun belirler (hesap, maaş günü gibi)
   let metin = null;
   const metinAyarla = (fn) => { metin = fn; };
+  const menajerAyarla = (img) => { if (menajer) menajer.img = img; };
   function balon() { return metin ? { x: menajer.x, y: menajer.y - 12, metin: metin() } : null; }
 
-  return { ad: "Ev", alt: "Kalvar · Kiralık tek oda", kur, guncelle, ciz, balon, metinAyarla };
+  return { ad: "Ev", alt: "Kalvar · Kiralık tek oda", kur, guncelle, ciz, balon, metinAyarla, menajerAyarla };
 })();

@@ -47,6 +47,12 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
   - Çizim: `KAYNAK.karo(ctx, sayfa, s, r, x, y)`.
 - **Karakterler katmanlardan oluşur:** ten (0. sütun, satır 0–2), şort (3), ayakkabı (4), üst (6–17), saç ve sakal (19–26). Birleştirmeyi `KARAKTER.yap(tarif)` yapar.
   - Forma ve şort renkleri `boya()` ile kulüp rengine çevrilir. Futbolcu formasının temeli (10, 0) tişört karosu.
+  - **Saçlar:** Her saç rengi 4×4'lük bir blok.
+    - Bloklar: kahverengi (19,0), kızıl (23,0), sarı (19,4), siyah (23,4), beyaz (19,8).
+    - Modelin yeri blok içinde aynı. Sakallar bloğun son satırında olduğu için sakal rengi saçı izliyor.
+    - (0,2) ve (2–3, 0) gibi karolarda saç ve bıyık bir arada çizilmiş, bunlar katalogda yok.
+  - **Üst giyim:** Renk grupları siyah (14,5), bej (10,5), turkuaz (10,0), turuncu (6,0), yeşil (6,5) ve lila (14,0). Her grupta aynı modeller aynı yerde. 4. satır ve 8–9. satırlar zırh görünümlü, kullanılmıyor.
+  - `KARAKTER.KATALOG` seçenekleri tutar. Menajerin görünüşü sıra numaralarından oluşur (`S.menajer.gorunus`) ve `KARAKTER.gorunus(g)` ile çizilir.
 - **Bilinen karolar:**
   - sehir: çim (0,24), kaldırım (1,20), bej zemin (3,19), asfalt (11,19), koni (14,18), tel örgü (17,18), lamba (1,16–18), ağaç ve çalılar (31–36, 10–13)
   - ic: mutfak (0–9, 12–17), tek kişilik yatak (8–15, 6–7), halı (16–18, 8–11), koltuk (21–22, 4–5)
@@ -69,4 +75,7 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
   - Oyun ekranında ev, tarih ve para görünüyor. "Günü bitir" düğmesi var.
   - 3 kayıt yuvası, duraklatma (Esc), ayarlar (tam ekran), kapanırken otomatik kayıt.
   - Tarayıcıda ve Electron'da test edildi. Kurulum dosyası derlendi.
+- **Karakter oluşturma (v0.1.1):** Yeni kariyer üç adımda ilerliyor: kimlik → görünüş (`js/gorunus.js`) → mektup.
+  - Seçilebilenler: ten (5), saç (10, kel dahil), saç rengi (5), sakal (5), üst (6 model × 6 renk), pantolon (6), ayakkabı (3).
+  - "Rastgele" düğmesi var. Geri dönünce girilen bilgiler korunuyor.
 - Sıradaki adım: Aşama 1 (ilk dilim).

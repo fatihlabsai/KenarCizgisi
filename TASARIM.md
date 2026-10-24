@@ -142,6 +142,8 @@ Her gün **gündüz kulüpte**, **akşam hayatında** geçer. Akşamları seçim
 - Hız ayarı: ×1, ×2, ×4 ya da sadece sonucu görmek.
 
 ### 6.4 Menajerin hayatı (kapsamlı)
+- ✅ **Karakter oluşturma:** Yeni kariyerde menajerin teni, saçı, saç rengi, sakalı, üst giyimi, pantolonu ve ayakkabısı seçiliyor.
+  - 💡 İleride evdeki aynadan görünüş değiştirilebilir. Kuaför ve giyim mağazası şehirde para harcanan yerler olabilir.
 - **Konut:** Kiralık daireyle başlarsın. Ev kiralayabilir ya da satın alabilirsin, mahalle seçebilirsin, evini döşeyebilirsin. Ev odalarıyla birlikte piksel sahne olarak görünür.
 - **Araç:** Otobüsten başlayıp araba almaya kadar gider. Ulaşım zamanını ve itibarını etkiler.
 - **Yatırım:** Kira geliri getiren daire, bir kafe ya da dükkân, bir altyapı okulu, şehirdeki projeler. Kazandırabilir de batırabilir de.

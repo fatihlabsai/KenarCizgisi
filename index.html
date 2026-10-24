@@ -34,7 +34,31 @@
       <p class="hata" id="yeni-hata"></p>
       <div class="dugme-satiri">
         <button class="dugme ikincil" id="yeni-geri">Geri</button>
-        <button class="dugme" id="yeni-devam">Başvur</button>
+        <button class="dugme" id="yeni-devam">Devam</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Karakter oluşturma: menajerin görünüşü -->
+  <section id="ekran-gorunus" class="ekran kagit-ekran" hidden>
+    <div class="kagit gorunus-kagit">
+      <h2>Görünüşün</h2>
+      <p class="soluk">Kulüpte ilk gün seni böyle görecekler.</p>
+      <div class="gorunus-izgara">
+        <div class="onizleme">
+          <canvas class="tuval" id="gorunus-buyuk"></canvas>
+          <div class="onizleme-alt">
+            <canvas class="tuval" id="gorunus-saha"></canvas>
+            <div><b id="gorunus-ad"></b><span>Kalvar Spor · Teknik direktör</span></div>
+          </div>
+        </div>
+        <div class="secimler" id="gorunus-secimler"></div>
+      </div>
+      <div class="dugme-satiri gorunus-dugmeler">
+        <button class="dugme ikincil" id="gorunus-rastgele">Rastgele</button>
+        <span class="bosluk"></span>
+        <button class="dugme ikincil" id="gorunus-geri">Geri</button>
+        <button class="dugme" id="gorunus-devam">Başvur</button>
       </div>
     </div>
   </section>
@@ -87,6 +111,7 @@
   <script src="js/depo.js"></script>
   <script src="js/cizici.js"></script>
   <script src="js/arayuz.js"></script>
+  <script src="js/gorunus.js"></script>
   <script src="js/oyun.js"></script>
   <script src="js/ana.js"></script>
 </body>

@@ -10,12 +10,12 @@ const MEMLEKETLER = [
   { id: "odexia", ad: "Odexia", yazi: "Dorakos'tan geldin. Ardessa'da evindesin, Brennik'te misafir." },
 ];
 
-function yeniDurum(ad, soyad, memleket, yuva) {
+function yeniDurum(ad, soyad, memleket, yuva, gorunus) {
   return {
     v: KAYIT_SURUMU,
     yuva,
     kayitZamani: 0,
-    menajer: { ad, soyad, memleket },
+    menajer: { ad, soyad, memleket, gorunus: { ...(gorunus || KARAKTER.VARSAYILAN) } },
     kulup: { id: "kalvar", ad: "Kalvar Spor", forma: "#c8a640", sort: "#2b2f3a" },
     ev: { adres: "Lale Sokak No 4", sehir: "Kalvar", kiraKulupten: 3 },
     tarih: "2026-07-01",
@@ -86,16 +86,18 @@ async function kayitPenceresi(mod, sonra) {
 }
 
 // ---------- Yeni kariyer ----------
+// Adımlar: kimlik (ad, soyad, memleket) → görünüş → teklif mektubu → oyun
 let secilenMemleket = null;
+let taslak = null; // yeni kariyerde doldurulan bilgiler; geri dönünce kaybolmasın diye tutuluyor
 
-function yeniKariyerEkrani() {
+function yeniKariyerEkrani(temizle = true) {
   ARAYUZ.ekranGoster("ekran-yeni");
   ARAYUZ.escYoksa = menuyuKur;
   CIZICI.durdur();
-  secilenMemleket = null;
+  if (temizle) { taslak = null; secilenMemleket = null; $("yeni-ad").value = ""; $("yeni-soyad").value = ""; }
   $("yeni-hata").textContent = "";
   const kutu = $("yeni-memleket");
-  kutu.innerHTML = MEMLEKETLER.map((m) => `<button class="memleket" data-id="${m.id}" aria-pressed="false"><b>${m.ad}</b><span>${m.yazi}</span></button>`).join("");
+  kutu.innerHTML = MEMLEKETLER.map((m) => `<button class="memleket" data-id="${m.id}" aria-pressed="${m.id === secilenMemleket}"><b>${m.ad}</b><span>${m.yazi}</span></button>`).join("");
   kutu.querySelectorAll(".memleket").forEach((b) => {
     b.onclick = () => {
       secilenMemleket = b.dataset.id;
@@ -110,20 +112,29 @@ function adDuzelt(s) {
   return t ? t.charAt(0).toLocaleUpperCase("tr-TR") + t.slice(1) : "";
 }
 
-async function basvur() {
+function kimlikDevam() {
   const ad = adDuzelt($("yeni-ad").value), soyad = adDuzelt($("yeni-soyad").value);
   if (!ad || !soyad) { $("yeni-hata").textContent = "Adını ve soyadını yaz."; return; }
   if (!secilenMemleket) { $("yeni-hata").textContent = "Nereli olduğunu seç."; return; }
+  taslak = { ...(taslak || {}), ad, soyad, memleket: secilenMemleket };
+  gorunusAdimi();
+}
+
+function gorunusAdimi() {
+  GORUNUS_EKRANI.ac(taslak, { geri: () => yeniKariyerEkrani(false), devam: basvur });
+}
+
+async function basvur() {
   const yuvalar = await yuvalariOku();
   const bos = yuvalar.findIndex((k) => !k);
-  const devam = (n) => { S = yeniDurum(ad, soyad, secilenMemleket, n); mektupEkrani(); };
+  const devam = (n) => { S = yeniDurum(taslak.ad, taslak.soyad, taslak.memleket, n, taslak.gorunus); mektupEkrani(); };
   if (bos >= 0) devam(bos + 1);
   else kayitPenceresi("yeni", devam);
 }
 
 function mektupEkrani() {
   ARAYUZ.ekranGoster("ekran-mektup");
-  ARAYUZ.escYoksa = () => { S = null; yeniKariyerEkrani(); };
+  ARAYUZ.escYoksa = () => { S = null; gorunusAdimi(); };
   $("mektup-tarih").textContent = "28 Haziran 2026";
   const m = S.menajer;
   $("mektup-metin").innerHTML = `
@@ -152,6 +163,7 @@ function oyunEkrani() {
   ARAYUZ.ekranGoster("ekran-oyun");
   ARAYUZ.escYoksa = duraklat;
   SAHNE_DAIRE.metinAyarla(() => `Hesap: ${para(S.para)} · Maaşa ${TARIH.ayBasinaKalan(S.tarih)} gün var`);
+  SAHNE_DAIRE.menajerAyarla(KARAKTER.gorunus(S.menajer.gorunus));
   CIZICI.goster($("tuval-oyun"), SAHNE_DAIRE, { mod: "sigdir", kap: document.querySelector(".oyun-orta") });
   hudYenile();
 }
@@ -241,12 +253,12 @@ async function menuyuKur() {
 
 // ---------- Düğmeler ----------
 $("yeni-geri").onclick = menuyuKur;
-$("yeni-devam").onclick = basvur;
+$("yeni-devam").onclick = kimlikDevam;
 ["yeni-ad", "yeni-soyad"].forEach((id) => {
-  $(id).addEventListener("keydown", (e) => { if (e.key === "Enter") basvur(); });
+  $(id).addEventListener("keydown", (e) => { if (e.key === "Enter") kimlikDevam(); });
   $(id).addEventListener("input", () => { $("yeni-hata").textContent = ""; });
 });
-$("mektup-geri").onclick = () => { S = null; yeniKariyerEkrani(); };
+$("mektup-geri").onclick = () => { S = null; gorunusAdimi(); };
 $("mektup-imza").onclick = imzala;
 $("oyun-menu").onclick = duraklat;
 $("oyun-gun").onclick = gunuBitir;
