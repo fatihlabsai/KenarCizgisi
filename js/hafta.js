@@ -51,10 +51,11 @@ const HAFTA = (() => {
       S.para += S.maas;
       let not = `Maaş yattı: ${para(S.maas)}`;
       // Kulübün ödediği ilk üç ay bitince kira menajerden çıkar
-      if (S.ev.kiraBaslangic && S.tarih >= S.ev.kiraBaslangic) { S.para -= S.ev.kira; not += ` · kira: -${para(S.ev.kira)}`; }
+      if (!S.ev.sahip && S.ev.kira && (!S.ev.kiraBaslangic || S.tarih >= S.ev.kiraBaslangic)) { S.para -= S.ev.kira; not += ` · kira: -${para(S.ev.kira)}`; }
       ARAYUZ.bildirim(not);
       S.gunluk.push({ tarih: S.tarih, metin: not });
       if (typeof YONETIM !== "undefined") YONETIM.aylik(S);
+      EKONOMI.aylik(S);
     }
     TRANSFER.gunluk();
     if (g === 1) DUNYA.haftalikGelisim(S);
@@ -109,7 +110,7 @@ const HAFTA = (() => {
     bagla("g-aksam", aksamaGec);
   }
 
-  function aksamaGec() { S.gun = { asama: "aksam" }; kaydet(true); goster(); }
+  function aksamaGec() { const pazar = haftaGunu(S.tarih) === 0; S.gun = { asama: "aksam" }; YASAM.basla(pazar ? "pazar" : "aksam"); }
 
   // ---------- Antrenman ----------
   function antrenmanSabah() {
@@ -277,39 +278,17 @@ const HAFTA = (() => {
     panel(`<h3>Pazar</h3><p>Kapının önüne <b>Sınır Postası</b> bırakılmış. Manşet:</p><p class="manset-kucuk">${kacir(g.manset)}</p>
       <p class="soluk">Bugün izin günü. Oyuncular dinleniyor.</p>
       <div class="dugme-dizi">${dugme("p-oku", "Gazeteyi oku", true)}</div>
-      <div class="dugme-satiri">${dugme("p-aksam", "Akşama geç ▸")}</div>`);
+      <div class="dugme-satiri">${dugme("p-aksam", "Dışarı çık ▸")}</div>`);
     bagla("p-oku", () => GAZETE.goster(g));
     bagla("p-aksam", aksamaGec);
   }
 
   // ---------- Akşam ----------
+  // Akşamlar Kalvar'da yürünerek geçer (yasam.js). Eski kayıtlarda kalmış akşam sonucu varsa doğrudan günü bitir.
   function aksam() {
-    sahneGoster(SAHNE_DAIRE);
-    $("hud-yer").textContent = `${S.ev.adres} · ${S.ev.sehir} · Akşam`;
-    if (S.gun.aksamSonuc) {
-      panel(`<h3>Akşam</h3><p>${S.gun.aksamSonuc}</p><div class="dugme-satiri">${dugme("ak-bitir", "Günü bitir ▸")}</div>`);
-      bagla("ak-bitir", gunuBitir);
-      return;
-    }
-    const secenek = (id, baslik, alt, kapali) => `<button class="antrenman-sec" id="${id}"${kapali ? " disabled" : ""}><b>${baslik}</b><span>${alt}</span></button>`;
-    const yemekAdaylari = kadro().slice().sort((a, b) => a.moral - b.moral);
-    panel(`<h3>Akşam</h3><p class="soluk">Günün geri kalanı senin.</p>
-      <div class="antrenmanlar">
-        ${secenek("ak-ev", "Evde dinlen", "Erkenden yat. Enerji toplarsın.")}
-        ${secenek("ak-kafe", `${KAFE}'ye in`, `Bir çay, biraz sohbet. ${para(14)}. Stres azalır, kulağına bir şeyler çalınır.`, S.para < 14)}
-        ${secenek("ak-yemek", "Bir oyuncuyu yemeğe çağır", `Lale Sokak'taki lokantada. ${para(60)}. Oyuncunun morali yükselir.`, S.para < 60)}
-      </div>
-      <div class="yemek-sec" id="yemek-sec" hidden>
-        <select id="yemek-oyuncu">${yemekAdaylari.map((o) => `<option value="${o.id}">${o.no} · ${kacir(DUNYA.adSoyad(o))} · moral ${o.moral}</option>`).join("")}</select>
-        ${dugme("yemek-git", "Çağır")}
-      </div>`);
-    bagla("ak-ev", () => aksamBitti(evdeDinlen()));
-    bagla("ak-kafe", () => aksamBitti(kafeyeIn()));
-    bagla("ak-yemek", () => { $("yemek-sec").hidden = false; });
-    bagla("yemek-git", () => aksamBitti(yemegeCagir(oyuncu($("yemek-oyuncu").value))));
+    if (S.gun.aksamSonuc) { panel(`<h3>Akşam</h3><p>${S.gun.aksamSonuc}</p><div class="dugme-satiri">${dugme("ak-bitir", "Günü bitir ▸")}</div>`); bagla("ak-bitir", gunuBitir); return; }
+    YASAM.devam();
   }
-
-  function aksamBitti(metin) { S.gun.aksamSonuc = metin; hudYenile(); kaydet(true); aksam(); }
 
   function evdeDinlen() {
     S.menajer.enerji = Math.min(100, S.menajer.enerji + 30);
@@ -366,7 +345,7 @@ const HAFTA = (() => {
     return `${DUNYA.adSoyad(o)} ile Lale Sokak'taki lokantada yemek yediniz. ${soz} (Moral ${onceki} → ${o.moral})`;
   }
 
-  return { goster, gunBasla, hudYenile, maci, macBasligi, macYeri, macTuru, ANTRENMAN_BASLANGIC, haftaGunu, GUN_ADI, panel, sahneGoster, gunuBitir };
+  return { goster, gunBasla, hudYenile, maci, macBasligi, macYeri, macTuru, ANTRENMAN_BASLANGIC, haftaGunu, GUN_ADI, panel, sahneGoster, gunuBitir, dedikodu, yemegeCagir };
 })();
 
 // Oyun ekranının üstüne açılan büyük kâğıt (kadro, basın, gazete)

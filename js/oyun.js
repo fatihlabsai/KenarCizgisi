@@ -1,5 +1,5 @@
 // Oyun durumu, yeni kariyer, kayıt yuvaları ve oyun ekranı.
-const KAYIT_SURUMU = 3;
+const KAYIT_SURUMU = 4;
 const YUVA_SAYISI = 3;
 const BASLANGIC_TARIHI = "2026-07-27"; // Pazartesi, ilk antrenman günü
 
@@ -56,6 +56,11 @@ function guncelDurum(k) {
   k.ev.kira ??= 620;
   k.ev.kiraBaslangic ??= "2026-11-01";
   k.transfer ||= { teklifler: [], gelen: [], gecmis: [] };
+  // v4: yürünebilir Kalvar, ev ve araba, banka, yatırımlar, ilişkiler, itibar
+  k.ev.id ||= "ev:daire";
+  k.hayat ||= { iliski: {}, tanisma: null, partner: false, araba: null, mobilya: [], yatirimlar: [], banka: { mevduat: 0, borc: 0, taksit: 0 }, yagmur: false };
+  k.itibar.sehir ??= 50; k.itibar.basin ??= 50;
+  if (k.gun && k.gun.asama === "aksam" && !k.gun.dunya && !k.gun.aksamSonuc) k.gun.dunya = { bolge: "avlu", konum: "kulupOnu", saat: 18 * 60, tur: "aksam" };
   k.v = KAYIT_SURUMU;
   return k;
 }

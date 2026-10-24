@@ -186,5 +186,5 @@ const KARAKTER = (() => {
     return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
   }
 
-  return { yap, futbolcu, oyuncu, tohumlu, KATALOG, VARSAYILAN, gorunus, rastgeleGorunus };
+  return { yap, futbolcu, oyuncu, tohumlu, KATALOG, VARSAYILAN, gorunus, rastgeleGorunus, tarif: gorunustenTarif };
 })();

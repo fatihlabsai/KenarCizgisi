@@ -424,3 +424,13 @@ html, body {
 .buyuk-yazi { font-size: 30px; margin: 2px 0 0; }
 .sezon-ozeti p { margin: 0 0 10px; }
 .etiket-kirmizi { font-style: normal; font-size: 15px; padding: 0 4px; background: var(--kirmizi); color: #fff; }
+
+/* ---------- Yürünebilir dünya ---------- */
+.diyalog { margin: 10px 0 12px; padding: 10px 12px; background: var(--kagit-koyu); box-shadow: inset 4px 0 0 var(--hardal); }
+.diyalog b { font-weight: 400; font-size: 24px; display: block; line-height: 1; margin-bottom: 4px; }
+.diyalog p { margin: 0 0 8px; }
+.diyalog .dugme-dizi { margin-top: 6px; }
+.diyalog .dugme { font-size: 19px; padding: 3px 12px 5px; text-align: left; }
+.hayat-izgara { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.hayat-izgara ul { margin: 4px 0 0; padding-left: 18px; }
+#tuval-oyun { cursor: pointer; }

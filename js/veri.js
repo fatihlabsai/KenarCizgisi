@@ -18,6 +18,13 @@ const ISIMLER = {
   },
 };
 
+// Kasabalılar için kadın isimleri (futbolcu listeleri sadece erkek isimleri)
+const ISIMLER_K = {
+  c: ["Lena", "Ilse", "Vesna", "Hana", "Klara", "Mila", "Rosa", "Ida", "Nora", "Petra", "Sasha", "Agnes", "Marta", "Jana"],
+  s: ["Giulia", "Chiara", "Livia", "Serena", "Paola", "Bianca", "Nadia", "Elena", "Teresa", "Viola"],
+  o: ["Eleni", "Katerina", "Sofia", "Ioanna", "Daphne", "Irini", "Thalia", "Zoe", "Anna", "Despina"],
+};
+
 const KOKEN_ADI = { c: "Karkeryan", s: "Sinistralı", o: "Odexialı" };
 const MEMLEKET_KOKEN = { carceria: "c", sinistra: "s", odexia: "o" };
 

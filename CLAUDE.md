@@ -43,17 +43,31 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
   - `sozlesme.js`: oyuncuyla maaş ve süre pazarlığı (transfer, serbest, uzatma). Maaş bütçesi aşılamaz.
   - `transfer.js`: pencereler (temmuz–ağustos, ocak), teklif ve karşı teklif, serbest oyuncular, bize gelen teklifler, kulüpler arası transferler, transfer ekranı.
   - `basin.js`: cuma basın toplantısı (muhabir Mira Halvor).
+  - `sehir.js`: Kalvar haritası. 4 bölge (lale, carsi, avlu, ova) ve 9 iç mekân (3 ev, kafe, lokanta, banka, emlak, eşya, galeri).
+    - Bölgeler sadece veri: zemin, binalar (çatı + cephe), kapılar, ağaç/lamba/bank, engel ızgarası, bölge çıkışları, gezinti noktaları.
+    - Binanın kapısına alttaki kaldırım karesinden girilir.
+  - `sahne-dunya.js`: yürünebilir dünya. Sokakta 400×240, iç mekânda 280×168 görüş.
+    - Hareket: oklar/WASD ya da fareyle tıklama (karo ızgarasında genişlik öncelikli yol bulma). Çarpışma ayak kutusuyla yapılır.
+    - Kamera menajeri takip eder. Mevsime göre karanlık, lamba ve pencere ışıkları, yağmur.
+    - Yürüyen insanlar ve yoldan geçen arabalar. E / Enter / Boşluk ile etkileşim.
+  - `yasam.js`: akşam ve pazar akışı.
+    - Saat: 1 gerçek saniye 2 oyun dakikası. Akşam 18:00'de, pazar 10:00'da evden başlar. 01:00'de zorla eve dönülür.
+    - Mekânların açılış saatleri, kapılar, tanıdıklar ve konuşmalar, tanışma, uyku, ayna (görünüş değiştirme).
+  - `ekonomi.js`: evler (kirala/satın al/taşın), mobilya (evde görünür), araba (bölgeler arası hızlı geçiş), banka (mevduat %0,4, kredi %1,5), yatırımlar (Tessel daire, Mirov arsa ve yazlık, kafe ortaklığı), ay başı gelir-gider, Hayatım ekranı.
   - `gazete.js`: pazar günü çıkan Sınır Postası.
   - `cizici.js`: etkin sahneyi kendi çözünürlüğünde (varsayılan 320×192) çizip tam sayı katıyla büyütür. "kapla" ana menü, "sigdir" oyun içi. `balon()` ve `ustCiz()` keskin yazı için.
   - `arayuz.js`: ekran geçişleri, açılır pencere, bildirim, `TARIH`, `para()`, Türkçe ek yardımcıları `ek(ad, "in"|"i"|"e"|"de"|"le"|"lik")` ve `sayiEk(n, ...)`.
   - `oyun.js`: oyun durumu `S`, yeni kariyer, kayıt yuvaları, eski kayıtların yükseltilmesi (`guncelDurum`), duraklatma, ayarlar, ana menü.
   - `depo.js`: kayıtlar. Masaüstünde `window.masaustu` köprüsünü, tarayıcıda localStorage'ı kullanır.
-- Kayıt: `%APPDATA%\KenarCizgisi\saves\kayit1..3.json` ve `ayarlar.json`. `KAYIT_SURUMU = 3`. Eski kayıtlar açılırken `guncelDurum` ile tamamlanır (kadro, sözleşme, lig, bütçe o an eklenir).
+- Kayıt: `%APPDATA%\KenarCizgisi\saves\kayit1..3.json` ve `ayarlar.json`. `KAYIT_SURUMU = 4`. Eski kayıtlar açılırken `guncelDurum` ile tamamlanır (kadro, sözleşme, lig, bütçe o an eklenir).
 - **Oyun durumu (S):** tohum, kulupId, menajer (görünüş, enerji, stres), itibar (yönetim, taraftar), takimlar (kadro + taktik + butce), gun (asama: sabah/aksam, rapor, aksamSonuc), maclar, gazeteler, basin, bilinen (öğrenilen rakip dizilişleri), duyulanlar, gunluk.
   - v3 ile gelenler: lig (fikstür ve sonuçlar), hazirlik, serbest (bonservissiz oyuncular), transfer (gelen teklifler, geçmiş), hedef, sezonlar, ekKulupler (alt ligden çıkanlar), kovuldu, ev.kira / ev.kiraBaslangic.
+  - v4 ile gelenler: hayat {iliski, tanisma, partner, araba, mobilya, yatirimlar, banka {mevduat, borc}, yagmur, konusulan}, itibar.sehir ve itibar.basin, ev.id ("ev:daire" ve diğerleri), gun.dunya {bolge, konum, saat, tur}.
   - Oyuncu: oz (7 özellik), kondisyon, moral, form, maas, bitis, sakatlik {gun, tur}, ceza (maç), sezon {mac, gol, asist, sari, kirmizi, puan}, gelisim, gorunus.
   - Taktik: dizilis, anlayis, talimat {hat, pres, pas, genislik}, gorev {kaptan, penalti, duran}, ilk11.
 - **Takvim:** Yeni kariyer 27 Temmuz 2026 Pazartesi başlar. Pzt–Per antrenman, Cuma basın ve kadro, Cumartesi maç, Pazar gazete ve izin.
+  - Gündüz kulüp işleri panelden yapılır. "Akşama geç" ile Kalvar'da yürünebilir akşam başlar (yasam.js). Pazar "Dışarı çık" ile evden 10:00'da başlar.
+  - Akşamın yerleri: kafe (₡14, 1 saat, dedikodu), lokanta (yalnız ₡25 ya da oyuncuyla ₡60), ev (yatak = günü bitir, ayna), banka, emlak, eşya, galeri, komşu kapıları, ova (stresi azaltır).
   - Hazırlık maçları: 1, 8, 15, 22 Ağustos (sonraki sezonlarda `LIG.hazirlikUret`).
   - **Lig:** 29 Ağustos 2026'dan 20 Mart 2027'ye 27 hafta. Kış arası 19 Aralık–2 Ocak. Sezon bitince baraj, değerlendirme ve yaz tatili. Yeni sezon temmuzun son pazartesi başlar.
   - Maaş her ayın 1'inde yatar. Başlangıçta para ₡1.840, maaş ₡2.400. Kira (₡620) 1 Kasım 2026'dan itibaren maaştan düşer. Hedef tutarsa maaş +₡300.
@@ -64,7 +78,7 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
   - Bütün kulüplere pazartesi günleri `DUNYA.haftalikGelisim` uygulanıyor. Gençler gelişiyor, 31 yaşından sonra hız ve dayanıklılık düşüyor.
   - Test: bir buçuk sezonda Kalvar 60'tan 64'e, rakipler 1–4 puan arttı.
   - Deneme betiği: `veri, karakter, dunya, mac-motoru` dosyaları Node `vm` ile yüklenip `MAC.hizliOyna` çağrılıyor. Atak olasılığı `0.165 * oran ** 0.9`.
-- **Otomatik oynatma testi:** Tarayıcıda bir bot (`window.oto(gün)`) düğmelere basarak günleri geçirir. Maçlarda "Sonuca geç"i kullanır. Uzun koşular arka planda başlatılıp `otoBitti`/`otoLog` ile izlenir, çünkü tek çağrı 45 saniyeyi geçemez.
+- **Otomatik oynatma testi:** Tarayıcıda bir bot (`window.oto(gün)`) düğmelere basarak günleri geçirir. Maçlarda "Sonuca geç"i kullanır, akşamları `YASAM.uyu(false)` ile günü bitirir. Uzun koşular arka planda başlatılıp `otoBitti`/`otoLog` ile izlenir, çünkü tek çağrı 45 saniyeyi geçemez.
 - Masaüstü: Electron 33.2.1 + electron-builder 25.1.8 (NSIS). `main.js` ve `preload.js` CARCERIA'dan uyarlandı.
 - **Otomatik güncelleme** `fatihlabsai/KenarCizgisi_surumler` deposundan geliyor. Kurulu oyun 4 saniye sonra ve her 4 saatte bir denetliyor.
   - Yeni sürüm iner ve kurulmaya hazır olunca ana menüde "Şimdi kur" düğmesi çıkıyor.
@@ -120,14 +134,16 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
 
 ## Durum (24.10.2026)
 - **Yayında olan son sürüm v0.3.0 (Sezon).**
-- Aşama 0, karakter oluşturma ve Aşama 1 (v0.2.0) bitti.
-- **Aşama 2 bitti (v0.3.0, yayında):**
-  - Görsel taktik ekranı: maç öncesi ve maç içi, sürükle-bırak, 4 talimat, 3 görev, rakip analizi.
-  - Maç motoru: talimatlar, kaptan etkisi, penaltı (görevli atar), duran top asisti, sakatlık, eksik kalma, yer değiştirme.
-  - Carceria Ligi: 27 hafta, puan tablosu, fikstür, gol krallığı, kart cezaları, baraj, yeni sezon (yaşlanma, emeklilik, sözleşmesi bitenler, altyapıdan gençler).
-  - Transfer: pencereler, teklif ve karşı teklif, sözleşme pazarlığı, serbest oyuncular, bize gelen teklifler, kulüpler arası transferler.
-  - Yönetim: hedef ve bütçe toplantısı, güven, uyarı ve kovulma, sezon sonu değerlendirmesi. Kira kasımdan itibaren.
-  - Gazete: lig haftası, puan durumu, gol krallığı, gerçek transferler.
-  - Test botu iki ayrı koşuda bir buçuk sezon oynadı, hata çıkmadı.
-- 💡 Bu aşamada eklenen isimler: Ova Ligi (alt lig) ve kulüpleri (Harman Gücü, Tessel Demirspor, Ardessa Yıldızı, Brennik Union).
-- Sıradaki adım: kullanıcının sezonu oynayıp geri bildirim vermesi, sonra Aşama 3 (menajerin hayatı).
+- Aşama 0, karakter oluşturma, Aşama 1 (v0.2.0) ve Aşama 2 (v0.3.0) bitti.
+- Kullanıcının v0.3.0 geri bildirimi: "Yaşayan bir dünya hissi alamadım, yürüyemiyoruz, dünya genişleyebilir." Aşama 3 bunun üzerine kuruldu.
+- **Aşama 3 bitti (v0.4.0, henüz yayınlanmadı):**
+  - Yürünebilir Kalvar: Lale Sokak, Çarşı, Avlu Stadı önü, Ova kenarı ve 9 iç mekân.
+  - Akşam saati, gece ışıkları, yağmur, yürüyen insanlar, arabalar.
+  - Tanıdıklar ve konuşmalar: taraftarlar maç sonucuna göre konuşur, oyuncular moraline göre. Gazeteci ilişki arttıkça gerçek kulis verir.
+  - Rastgele tanışma ve partner.
+  - Ev (3 ev), mobilya, araba, banka, yatırımlar, Hayatım ekranı, 4 itibar.
+  - Gazete menajerin hayatını da haber yapıyor.
+- 💡 Bu aşamada eklenenler:
+  - İsimler: Ovalı Lokantası (Dora), Kalvar Bankası (Bay Tamm), Varga Emlak (Ilse Varga), Petri Eşya (Petri usta), Kask Oto Galeri (Rado Kask), araba markaları (Ova, Ferrano, Tyrenna).
+  - **Kanon önerisi:** CARCERIA'nın 1982 gardiyanları Jovan Petri ve Lena Sorova bugün Lale Sokak'ta yaşayan emekliler. Kullanıcının onayı gerekiyor.
+- Sıradaki adım: kullanıcının yürünebilir şehri denemesi, sonra Aşama 4 (komşu ligler, Antlaşma Kupası, menajer kariyerleri, Demir Masa).

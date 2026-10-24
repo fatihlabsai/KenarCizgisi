@@ -83,11 +83,20 @@ const GAZETE = (() => {
     const bedel = Math.max(5000, Math.round(((DUNYA.guc(yildiz) - 40) * 900) / 500) * 500);
     if (!yeniTransferler.length) g.haberler.push({ baslik: "Kulis", metin: `${alici.kisa} cephesinin ${kulupBul(kaynakId).kisa} forması giyen ${DUNYA.adSoyad(yildiz)} için harekete geçtiği konuşuluyor. Kulislerde ${para(bedel)} telaffuz ediliyor.` });
 
+    // Şehirden: önce menajerin bu haftaki hayatı (taşınma, araba, kafe ortaklığı) haber olur
+    const hafta = (S.gunluk || []).filter((x) => x.tarih > TARIH.ekle(S.tarih, -7));
+    const tasinma = hafta.find((x) => x.metin.startsWith("Taşındın"));
+    const araba = hafta.find((x) => / alındı$/.test(x.metin) && !x.metin.startsWith("Eve"));
+    const ortak = hafta.find((x) => x.metin.includes("Gözcü Kafe'ye ortak"));
+    const kim = `${kulupBul(S.kulupId).kisa} teknik direktörü ${menajer.ad} ${menajer.soyad}`;
+    if (tasinma) g.haberler.push({ baslik: "Hoca taşındı", metin: `${kim} yeni evine geçti: ${tasinma.metin.replace("Taşındın: ", "").replace(" (senin)", "")}. Komşular kamyonetten inen koltuğu uzun uzun izledi.`, sehir: true });
+    else if (araba) g.haberler.push({ baslik: "Lale Sokak'ta yeni araba", metin: `${kim} artık çarşıya yürümüyor. Kask Oto Galeri'den aldığı ${araba.metin.replace(" alındı", "")} kapısının önünde.`, sehir: true });
+    else if (ortak) g.haberler.push({ baslik: "Gözcü Kafe'ye ortak", metin: `${kim}, Mavro'nun kafesine ortak oldu. Mavro: "Maç kazanırsak çay benden."`, sehir: true });
     // Şehirden
     const kullanilan = new Set(S.gazeteler.flatMap((x) => x.haberler.map((h) => h.baslik)));
     const aday = SEHIRDEN.filter((h) => !kullanilan.has(h.baslik));
     const sehir = al(aday.length ? aday : SEHIRDEN);
-    g.haberler.push({ baslik: sehir.baslik, metin: sehir.metin, sehir: true });
+    if (!tasinma && !araba && !ortak) g.haberler.push({ baslik: sehir.baslik, metin: sehir.metin, sehir: true });
 
     g.diger = digerleri.map((m) => `${kulupBul(m.ev).kisa} ${m.evGol}-${m.depGol} ${kulupBul(m.dep).kisa}`);
     g.digerBaslik = digerleri.some((m) => m.tur === "lig") ? "Ligde bu hafta" : "Hazırlık maçları";

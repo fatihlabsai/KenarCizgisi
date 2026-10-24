@@ -182,7 +182,7 @@ Her gün **gündüz kulüpte**, **akşam hayatında** geçer. Akşamları seçim
 | **0. İskelet** ✅ | Proje, pencere, ana menü, kayıt, `.exe` derleme | Boş ama açılan bir oyun |
 | **1. İlk dilim** ✅ | 1 kulüp, 1 hafta: antrenman sahnesi → 2D maç → maaş → daire → gazete | Oyunun hissi görülür |
 | **2. Sezon** ✅ | Carceria Ligi, fikstür, puan tablosu, görsel taktik ekranı, transfer, sözleşmeler | Bir sezon baştan sona oynanır |
-| **3. Hayat** | Yürünebilir Kalvar, yaşayan sokaklar, ev ve araba, yatırımlar, ilişkiler, itibar | Dünya yaşıyor, para gerçekten bir işe yarıyor |
+| **3. Hayat** ✅ | Yürünebilir Kalvar, yaşayan sokaklar, ev ve araba, yatırımlar, ilişkiler, itibar | Dünya yaşıyor, para gerçekten bir işe yarıyor |
 | **4. Dünya** | Komşu ligler, Antlaşma Kupası, menajer kariyerleri, Demir Masa | Dünya yaşamaya başlar |
 | **5. Cila** | Ses, müzik, denge, seslendirme | Yayına hazır |
 
@@ -241,7 +241,7 @@ Her gün **gündüz kulüpte**, **akşam hayatında** geçer. Akşamları seçim
 - **Yönetim güveni:** Sezon başında bir hedef konur. Güven çok düşerse kovulma riski doğar.
 - **Kira:** Kulübün ödediği ilk üç ay bitince, Kasım'dan itibaren Lale Sokak'ın kirası (₡620) maaştan düşer.
 
-## 9.3 Aşama 3 planı (💡 onay bekliyor)
+## 9.3 Aşama 3 planı ✅ (kullanıcı onayladı, yapıldı)
 
 ### Kullanıcının geri bildirimi (v0.3.0 sonrası) ✅
 > "Yaşayan bir dünya hissi alamadım. Evin içinde ya da sokakta karakteri görüyoruz ama yürüyemiyoruz. Dünya biraz daha genişleyebilir."
@@ -287,6 +287,29 @@ Bu yüzden Aşama 3'ün merkezinde **yürünebilir, yaşayan bir şehir** var. E
 - **Kişilerle ilişki:** Her önemli kişiyle bir ilişki puanın olur: oyuncular, Halvor, Mavro, Başkan Dorsa, komşular. Bağlar kapı açar, örneğin gazeteci sana kulis bilgisi verir.
 - **Rastgele tanışma:** Şehirde dolaşırken zamanı ve kişisi belli olmayan bir tanışma olabilir (✅ daha önce kararlaştırıldı).
 - **İtibar üçe ayrılır:** Şehirdeki, basındaki ve futbol dünyasındaki itibar ayrı ayrı izlenir.
+
+### Aşama 3'te verilen kararlar (💡 kullanıcı değiştirebilir)
+- **Tanıdıklar:** Mavro (Gözcü Kafe), Dora (Ovalı Lokantası), Bay Tamm (Kalvar Bankası), Ilse Varga (Varga Emlak), Petri usta (Petri Eşya), Rado Kask (Kask Oto Galeri).
+- **Kanon önerisi:** Jovan Petri ve Lena Sorova (CARCERIA'daki 1982 gardiyanları) bugün Lale Sokak'ta yaşayan emekliler.
+- **Evler:**
+  - Lale Sokak 4: kira ₡620, şu anki ev.
+  - Kavaklı Apartmanı: kira ₡900, satış ₡68.000.
+  - Ova Yolu 12 bahçeli ev: kira ₡1.400, satış ₡110.000.
+- **Ulaşım:**
+  - Bisiklet: ₡350.
+  - Ova 1300 (ikinci el): ₡3.800.
+  - Ferrano Brio (ikinci el): ₡6.900.
+  - Tyrenna Delta (sıfır): ₡14.500.
+- **Yatırımlar:**
+  - Tessel'de daire: ₡26.000, ayda ₡340.
+  - Mirov'da arsa: ₡12.000.
+  - Mirov'da yazlık: ₡60.000, yazın ayda ₡650.
+  - Gözcü Kafe'nin %25'i: ₡8.000. Kârı avluda kazanılan maçlarla artar.
+- **Banka:** Mevduat faizi aylık %0,4, kredi faizi aylık %1,5. Kredi limiti maaşın 8 katı.
+- **Mekânların açılış saatleri:**
+  - Kafe: 08:00–24:00.
+  - Lokanta: 12:00–23:00.
+  - Banka, emlak, eşya ve galeri: 09:00–21:00.
 
 ## 10. Açık sorular
 
