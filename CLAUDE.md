@@ -43,7 +43,8 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
 
 ## Git
 - Yerel depo `main` dalında. Kimlik: `fatihlabsai <info@playpofly.com>` (CARCERIA ile aynı).
-- GitHub deposu kullanıcı tarafından açılacak. Açılınca `origin` olarak eklenip push edilecek.
+- GitHub deposu: `fatihlabsai/KenarCizgisi` (özel), `origin` olarak bağlı.
+- **İki bilgisayar kuralı (CARCERIA'daki gibi):** Oturum başında `git pull`, iş bitince commit ve `git push`.
 - Commit mesajlarının sonuna şunu ekle: `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`
 
 ## Durum (24.10.2026)
