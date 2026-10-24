@@ -60,6 +60,9 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
   - Yönetim güveni 28'in altına düşerse ay başında uyarı gelir, 12'nin altına düşerse kovulursun. Küme düşmek de kovulmak demek.
 - **Maç motoru dengesi (Aşama 2):** Ligin bütün eşleşmelerinde maç başına ~3,0 gol, %22 beraberlik, maç başına ~0,25 penaltı, takım başına ~0,2 sakatlık. City–Ova ~3,4–0,6.
   - Talimatların etkisi küçük ama gerçek: önde hat maçı açar, yoğun pres kazandırır ama yorar (maç sonu kondisyon 76 yerine 71).
+- **Gelişim dengesi:** Antrenman katsayısı 0.032 (eskiden 0.13, takım bir buçuk sezonda 61'den 85'e çıkıyordu).
+  - Bütün kulüplere pazartesi günleri `DUNYA.haftalikGelisim` uygulanıyor. Gençler gelişiyor, 31 yaşından sonra hız ve dayanıklılık düşüyor.
+  - Test: bir buçuk sezonda Kalvar 60'tan 64'e, rakipler 1–4 puan arttı.
   - Deneme betiği: `veri, karakter, dunya, mac-motoru` dosyaları Node `vm` ile yüklenip `MAC.hizliOyna` çağrılıyor. Atak olasılığı `0.165 * oran ** 0.9`.
 - **Otomatik oynatma testi:** Tarayıcıda bir bot (`window.oto(gün)`) düğmelere basarak günleri geçirir. Maçlarda "Sonuca geç"i kullanır. Uzun koşular arka planda başlatılıp `otoBitti`/`otoLog` ile izlenir, çünkü tek çağrı 45 saniyeyi geçemez.
 - Masaüstü: Electron 33.2.1 + electron-builder 25.1.8 (NSIS). `main.js` ve `preload.js` CARCERIA'dan uyarlandı.
@@ -67,7 +70,7 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
   - Yeni sürüm iner ve kurulmaya hazır olunca ana menüde "Şimdi kur" düğmesi çıkıyor.
 - Geliştirme sürümünü açmak için `OYNA.bat`. Kurulum dosyası için `npx electron-builder --win nsis`, çıktısı `dist\KenarCizgisi Setup <sürüm>.exe`.
 - **Electron testi:** `--remote-debugging-port` ile açılıp CDP üzerinden sayfada kod çalıştırılabilir.
-  - `--user-data-dir` kayıt klasörünü değiştirmiyor, test gerçek kayıt klasörünü kullanır. **Kullanıcının gerçek kayıtları orada (kayit1, kayit2).**
+  - `--user-data-dir` kayıt klasörünü değiştirmiyor, test gerçek kayıt klasörünü kullanır. **Kullanıcının gerçek kayıtları orada (kayit1, kayit2, kayit3).** Testte bunlar sadece okunur.
     - Testte yalnızca `kayittest` adlı yuvaya yazıp sonra silin (`yeniDurum(..., "test")`).
     - `kayit1..3` yuvalarına asla yazmayın.
   - İşlemi adıyla kapatırken dikkat: `electron.exe` CARCERIA'nın geliştirme sürümünü de kapatır.
@@ -125,6 +128,6 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
   - Transfer: pencereler, teklif ve karşı teklif, sözleşme pazarlığı, serbest oyuncular, bize gelen teklifler, kulüpler arası transferler.
   - Yönetim: hedef ve bütçe toplantısı, güven, uyarı ve kovulma, sezon sonu değerlendirmesi. Kira kasımdan itibaren.
   - Gazete: lig haftası, puan durumu, gol krallığı, gerçek transferler.
-  - Test botu iki sezon boyunca oynadı, hata çıkmadı.
+  - Test botu iki ayrı koşuda bir buçuk sezon oynadı, hata çıkmadı.
 - 💡 Bu aşamada eklenen isimler: Ova Ligi (alt lig) ve kulüpleri (Harman Gücü, Tessel Demirspor, Ardessa Yıldızı, Brennik Union).
 - Sıradaki adım: kullanıcının sezonu oynayıp geri bildirim vermesi, sonra Aşama 3 (menajerin hayatı).
