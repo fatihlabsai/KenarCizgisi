@@ -182,7 +182,7 @@ Her gün **gündüz kulüpte**, **akşam hayatında** geçer. Akşamları seçim
 | **0. İskelet** ✅ | Proje, pencere, ana menü, kayıt, `.exe` derleme | Boş ama açılan bir oyun |
 | **1. İlk dilim** ✅ | 1 kulüp, 1 hafta: antrenman sahnesi → 2D maç → maaş → daire → gazete | Oyunun hissi görülür |
 | **2. Sezon** ✅ | Carceria Ligi, fikstür, puan tablosu, görsel taktik ekranı, transfer, sözleşmeler | Bir sezon baştan sona oynanır |
-| **3. Hayat** | Ev ve araba, yatırımlar, şehir haritası, ilişkiler, enerji/stres/itibar | Para gerçekten bir işe yarar |
+| **3. Hayat** | Yürünebilir Kalvar, yaşayan sokaklar, ev ve araba, yatırımlar, ilişkiler, itibar | Dünya yaşıyor, para gerçekten bir işe yarıyor |
 | **4. Dünya** | Komşu ligler, Antlaşma Kupası, menajer kariyerleri, Demir Masa | Dünya yaşamaya başlar |
 | **5. Cila** | Ses, müzik, denge, seslendirme | Yayına hazır |
 
@@ -240,6 +240,53 @@ Her gün **gündüz kulüpte**, **akşam hayatında** geçer. Akşamları seçim
 - **Kartlar:** Sarı kart birikirse ve kırmızı kart görülürse ceza var.
 - **Yönetim güveni:** Sezon başında bir hedef konur. Güven çok düşerse kovulma riski doğar.
 - **Kira:** Kulübün ödediği ilk üç ay bitince, Kasım'dan itibaren Lale Sokak'ın kirası (₡620) maaştan düşer.
+
+## 9.3 Aşama 3 planı (💡 onay bekliyor)
+
+### Kullanıcının geri bildirimi (v0.3.0 sonrası) ✅
+> "Yaşayan bir dünya hissi alamadım. Evin içinde ya da sokakta karakteri görüyoruz ama yürüyemiyoruz. Dünya biraz daha genişleyebilir."
+
+Bu yüzden Aşama 3'ün merkezinde **yürünebilir, yaşayan bir şehir** var. Ev, araba ve yatırım gibi sistemler bu şehrin içindeki mekânlara yerleşir.
+
+### Yürünebilir dünya
+- **Hareket:** Menajeri klavyeyle (oklar ya da WASD) ya da fareyle tıklayarak yürütürsün. Kamera onu takip eder.
+- **Kalvar, birbirine bağlı bölgelerden oluşur.** Bir bölgenin kenarından çıkınca diğerine geçilir:
+  - **Lale Sokak:** Evin, komşular.
+  - **Çarşı:** Gözcü Kafe, lokanta, banka, emlakçı, oto galeri, bakkal.
+  - **Avlu Stadı önü:** Kulüp binası, tribün girişi, eski cezaevi duvarı ve gözetleme kulesi.
+  - **Otobüs durağı ve istasyon:** Carceria City'ye sefer (Aşama 4'te başkent açılır).
+  - **Ova kenarı:** Yürüyüş yolu, park, tarlalar. Burada yürümek stresi azaltır.
+- **İç mekânlar:** Evin, Gözcü Kafe, lokanta ve emlakçı gibi yerlere kapıdan girilir.
+
+### Yaşayan sokaklar
+- **İnsanların bir günlük programı var:** Sabah işe gider, akşam kafeye ya da eve dönerler.
+- **Tanıdıklar:** Komşular, Mavro, Mira Halvor, taraftarlar, oyuncuların da şehirde dolaşanlar.
+- **Konuşma:** Yanlarına gidip konuşabilirsin. Söyledikleri haftanın olaylarına göre değişir, örneğin "Dünkü maç ne öyle hocam?". Kötü bir haftadan sonra taraftarlar soğuk davranır.
+- **Gün ve hava:** Akşam hava kararır, sokak lambaları yanar. Bazen yağmur yağar. Sokakta arabalar ve bisikletler geçer.
+
+### Zaman
+- **Gündüz:** Kulüp işleri (antrenman, basın, maç) bugünkü gibi sürer.
+- **Akşam:** Saat 18:00'de serbest dolaşma başlar. Her iş saati ilerletir: kafede oturmak bir saat, lokantada yemek iki saat sürer. 23:00'a kadar eve dönmezsen ertesi gün enerjin düşük başlar.
+- **Pazar:** Bütün gün dolaşmaya açık.
+
+### Ev, araba, yatırım
+- **Emlakçı:** Kiralık ve satılık evler var.
+  - Lale Sokak'taki daire (şu anki evin)
+  - Bahçeli bir müstakil ev
+  - Mirov'da bir yazlık
+  - Evin iç görünüşü seçtiğine göre değişir. Mobilya alıp evini döşeyebilirsin.
+- **Oto galeri:** Otobüsle başlarsın. İkinci el ya da sıfır araba alınabilir. Araba başka şehirlere gitmeyi hızlandırır ve itibarı etkiler.
+- **Banka:** Mevduat (faiz) ve kredi.
+- **Yatırımlar:** Getirisi olan ama riski de olan seçenekler:
+  - Kiraya vermek için daire almak
+  - Gözcü Kafe'ye ortak olmak
+  - Mirov'da arsa almak
+  - Kötü bir haber gelebilir, örneğin "kiracı ödemedi".
+
+### İlişkiler ve itibar
+- **Kişilerle ilişki:** Her önemli kişiyle bir ilişki puanın olur: oyuncular, Halvor, Mavro, Başkan Dorsa, komşular. Bağlar kapı açar, örneğin gazeteci sana kulis bilgisi verir.
+- **Rastgele tanışma:** Şehirde dolaşırken zamanı ve kişisi belli olmayan bir tanışma olabilir (✅ daha önce kararlaştırıldı).
+- **İtibar üçe ayrılır:** Şehirdeki, basındaki ve futbol dünyasındaki itibar ayrı ayrı izlenir.
 
 ## 10. Açık sorular
 
