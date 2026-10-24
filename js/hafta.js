@@ -10,22 +10,21 @@ const HAFTA = (() => {
   const sinirla = DUNYA.sinirla;
 
   // ---------- Takvim ----------
-  // Hazırlık listesinden sonra her cumartesi rastgele ama tekrarlanabilir bir hazırlık maçı
+  // Önce hazırlık maçları, sonra lig. Kış arasında ve sezon bitince cumartesiler boş.
   function maci(tarih) {
-    const h = HAZIRLIK.find((x) => x.tarih === tarih);
-    if (h) return h;
-    if (haftaGunu(tarih) !== 6 || tarih <= HAZIRLIK[HAZIRLIK.length - 1].tarih) return null;
-    const digerleri = KULUPLER.filter((k) => k.id !== S.kulupId);
-    const n = Number(tarih.replace(/-/g, "")) % digerleri.length;
-    return { tarih, rakip: digerleri[n].id, ev: n % 2 === 0 };
+    const h = (S.hazirlik || HAZIRLIK).find((x) => x.tarih === tarih);
+    if (h) return { ...h, tur: "hazirlik" };
+    return LIG.bizimMac(S, tarih);
   }
 
   function gundem() {
     const g = haftaGunu(S.tarih);
     if (S.tarih < ANTRENMAN_BASLANGIC) return { tur: "bos", baslik: "Kulüp kapalı", metin: `Oyuncular izinde. Antrenmanlar 27 Temmuz Pazartesi başlıyor.` };
+    if (S.lig && !S.lig.bitti && S.tarih > LIG.sonHafta(S).tarih && g !== 0) return { tur: "sezonSonu" };
     if (g === 6 && maci(S.tarih)) return { tur: "mac", mac: maci(S.tarih) };
     if (g === 5 && maci(TARIH.ekle(S.tarih, 1))) return { tur: "hazirlik", mac: maci(TARIH.ekle(S.tarih, 1)) };
     if (g === 0) return { tur: "gazete" };
+    if (g === 6 && LIG.kisArasi(S, S.tarih)) return { tur: "bos", baslik: "Kış arası", metin: "Lig üç hafta dinlenmede. Oyuncular izinli, şehir sakin." };
     if (g >= 1 && g <= 5) return { tur: "antrenman" };
     return { tur: "bos", baslik: "Boş gün", metin: "Bugün kulüpte iş yok." };
   }
@@ -35,17 +34,30 @@ const HAFTA = (() => {
     return h.ev ? `${b.ad} – ${r.ad}` : `${r.ad} – ${b.ad}`;
   };
   const macYeri = (h) => (h.ev ? bizim().stad : kulupBul(h.rakip).stad);
+  const macTuru = (h) => (h.tur === "lig" ? `Carceria Ligi · ${h.hafta}. hafta` : "Hazırlık maçı");
 
   // ---------- Gün değişimi ----------
   function gunBasla() {
     const g = haftaGunu(S.tarih);
-    for (const t of Object.values(S.takimlar)) for (const o of t.kadro) o.kondisyon = Math.min(100, o.kondisyon + (g === 1 ? 12 : 5));
+    for (const [kid, t] of Object.entries(S.takimlar)) for (const o of t.kadro) {
+      o.kondisyon = Math.min(100, o.kondisyon + (g === 1 ? 12 : 5));
+      if (o.sakatlik && o.sakatlik.gun > 0 && --o.sakatlik.gun <= 0) {
+        if (kid === S.kulupId) S.gunluk.push({ tarih: S.tarih, metin: `${DUNYA.adSoyad(o)} sakatlığını atlattı` });
+        delete o.sakatlik;
+      }
+    }
     S.menajer.enerji = Math.min(100, S.menajer.enerji + (S.menajer.stres > 75 ? 8 : 15));
     if (TARIH.ayinIlkGunu(S.tarih)) {
       S.para += S.maas;
-      ARAYUZ.bildirim(`Maaş yattı: ${para(S.maas)}`);
-      S.gunluk.push({ tarih: S.tarih, metin: `Maaş yattı: ${para(S.maas)}` });
+      let not = `Maaş yattı: ${para(S.maas)}`;
+      // Kulübün ödediği ilk üç ay bitince kira menajerden çıkar
+      if (S.ev.kiraBaslangic && S.tarih >= S.ev.kiraBaslangic) { S.para -= S.ev.kira; not += ` · kira: -${para(S.ev.kira)}`; }
+      ARAYUZ.bildirim(not);
+      S.gunluk.push({ tarih: S.tarih, metin: not });
+      if (typeof YONETIM !== "undefined") YONETIM.aylik(S);
     }
+    TRANSFER.gunluk();
+    if (g === 1) DUNYA.haftalikGelisim(S);
     S.gun = { asama: "sabah" };
   }
 
@@ -82,13 +94,16 @@ const HAFTA = (() => {
     ARAYUZ.escYoksa = () => (TAM.acik() ? TAM.kapat() : duraklat());
     TAM.kapat();
     hudYenile();
+    if (S.kovuldu) return YONETIM.kovulduEkrani();
     if (S.gun.asama === "aksam") return aksam();
+    YONETIM.kontrol(S);
     const gd = gundem();
     $("hud-yer").textContent = gd.tur === "mac" ? macYeri(gd.mac) : gd.tur === "antrenman" ? `${bizim().stad} · Antrenman sahası` : gd.tur === "hazirlik" ? `${bizim().stad} · Kulüp binası` : `${S.ev.adres} · ${S.ev.sehir}`;
     if (gd.tur === "antrenman") return antrenmanSabah();
     if (gd.tur === "hazirlik") return hazirlikGunu(gd.mac);
     if (gd.tur === "mac") return macGunu(gd.mac);
     if (gd.tur === "gazete") return gazeteGunu();
+    if (gd.tur === "sezonSonu") return YONETIM.sezonSonu();
     sahneGoster(SAHNE_DAIRE);
     panel(`<h3>${gd.baslik}</h3><p>${gd.metin}</p><div class="dugme-satiri">${dugme("g-aksam", "Akşama geç ▸")}</div>`);
     bagla("g-aksam", aksamaGec);
@@ -145,10 +160,12 @@ const HAFTA = (() => {
     const gel = r.gelisenler.length
       ? `<ul class="rapor-listesi">${r.gelisenler.map((g) => `<li class="iyi">${ad(g.id)}: ${OZELLIK_ADI[g.ozellik]} ${sayiEk(g.yeni, "e")} çıktı</li>`).join("")}</ul>`
       : `<p class="soluk">Bugün gözle görülür bir gelişme yok. Emek birikiyor.</p>`;
+    const yakin = (r.yakin || []).length ? `<p class="soluk">Gelişime en yakın: ${r.yakin.map((y) => `${kacir(oyuncu(y.id).soyad)} · ${OZELLIK_ADI[y.ozellik]} %${Math.round(y.oran * 100)}`).join(", ")}</p>` : "";
     const parlak = r.parlayan.length ? `<p><b>Öne çıkanlar:</b> ${r.parlayan.map(ad).join(", ")}</p>` : "";
     const kotu = r.kotu.length ? `<p><b>Kötü bir gün geçiren:</b> ${r.kotu.map(ad).join(", ")}</p>` : "";
     panel(`<h3>Antrenman raporu</h3><p class="soluk">${ANTRENMAN.TURLER[r.tur].ad}</p>${parlak}${kotu}
-      <p><b>Gelişenler</b></p>${gel}
+      <p><b>Gelişenler</b></p>${gel}${yakin}
+      ${(r.sakatlananlar || []).length ? `<p class="uyari">Sakatlanan: ${r.sakatlananlar.map((x) => `${ad(x.id)} (${x.tur}, ${x.gun} gün)`).join(", ")}</p>` : ""}
       <p>Takımın ortalama kondisyonu: <b class="${r.ortKond < 65 ? "kotu" : ""}">${r.ortKond}</b></p>
       <div class="dugme-satiri">${dugme("a-aksam", "Akşama geç ▸")}</div>`);
     bagla("a-aksam", aksamaGec);
@@ -159,7 +176,7 @@ const HAFTA = (() => {
     sahneGoster(SAHNE_SOKAK);
     const r = kulupBul(h.rakip);
     const basinYapildi = S.basin.some((b) => b.tarih === S.tarih);
-    panel(`<h3>Yarın maç var</h3><p><b>${kacir(macBasligi(h))}</b><br><span class="soluk">Hazırlık maçı · ${kacir(macYeri(h))} · Cumartesi 17:00</span></p>
+    panel(`<h3>Yarın maç var</h3><p><b>${kacir(macBasligi(h))}</b><br><span class="soluk">${macTuru(h)} · ${kacir(macYeri(h))} · Cumartesi 17:00</span></p>${ligSirasi()}
       ${rakipBilgisi(r)}
       <div class="dugme-dizi">
         ${dugme("h-basin", basinYapildi ? "Basın toplantısı yapıldı ✓" : "Basın toplantısına çık", true)}
@@ -168,8 +185,20 @@ const HAFTA = (() => {
       <div class="dugme-satiri">${dugme("h-aksam", "Akşama geç ▸")}</div>`);
     if (basinYapildi) $("h-basin").disabled = true;
     bagla("h-basin", () => BASIN.ac(h, () => hazirlikGunu(h)));
-    bagla("h-kadro", () => KADRO.secimAc(() => hazirlikGunu(h)));
+    bagla("h-kadro", () => TAKTIK.ac({ mod: "onMac", rakip: h.rakip, geri: () => hazirlikGunu(h) }));
     bagla("h-aksam", aksamaGec);
+  }
+
+  // Lig başladıysa iki takımın sırası
+  function ligSirasi() {
+    if (!S.lig || !S.lig.haftalar[0].maclar.some((m) => m.evGol != null)) return "";
+    return `<p class="soluk">Ligde ${LIG.sira(S, S.kulupId)}. sıradasın.</p>`;
+  }
+  // Sakat ve cezalı oyuncular
+  function eksikler() {
+    const liste = kadro().filter((o) => !DUNYA.uygun(o));
+    if (!liste.length) return "";
+    return `<p class="uyari">Eksikler: ${liste.map((o) => `${kacir(o.soyad)} (${o.ceza > 0 ? "cezalı" : "sakat"})`).join(", ")}</p>`;
   }
 
   function rakipBilgisi(r) {
@@ -191,35 +220,26 @@ const HAFTA = (() => {
       return;
     }
     const r = kulupBul(h.rakip);
-    panel(`<h3>Maç günü</h3><p><b>${kacir(macBasligi(h))}</b><br><span class="soluk">Hazırlık maçı · ${kacir(macYeri(h))} · 17:00</span></p>
+    panel(`<h3>Maç günü</h3><p><b>${kacir(macBasligi(h))}</b><br><span class="soluk">${macTuru(h)} · ${kacir(macYeri(h))} · 17:00</span></p>${ligSirasi()}${eksikler()}
       ${rakipBilgisi(r)}
       <p class="soluk">Diziliş: ${S.takimlar[S.kulupId].taktik.dizilis} · ${ANLAYISLAR[S.takimlar[S.kulupId].taktik.anlayis].ad}</p>
       <div class="dugme-dizi">${dugme("m-kadro", "Kadro ve taktik", true)}</div>
       <div class="dugme-satiri">${dugme("m-cik", "Maça çık ▸")}</div>`);
-    bagla("m-kadro", () => KADRO.secimAc(() => macGunu(h)));
+    bagla("m-kadro", () => TAKTIK.ac({ mod: "onMac", rakip: h.rakip, geri: () => macGunu(h) }));
     bagla("m-cik", () => {
+      const degisen = LIG.kadroDuzelt(S);
+      if (degisen.length) ARAYUZ.bildirim(`Oynayamayacaklar çıkarıldı: ${degisen.join(", ")}`);
+      LIG.yapayZekaKadro(S, h.rakip);
       S.menajer.enerji = Math.max(0, S.menajer.enerji - 20);
       const evId = h.ev ? S.kulupId : h.rakip, depId = h.ev ? h.rakip : S.kulupId;
-      MAC_EKRANI.ac(S, evId, depId, (m, puan) => { macSonuIsle(m, puan, h); goster(); });
+      MAC_EKRANI.ac(S, evId, depId, (m, puan) => { macSonuIsle(m, puan, h); goster(); }, h.tur);
     });
   }
 
   function macSonuIsle(m, puan, h) {
-    const kayit = (mm) => ({
-      tarih: S.tarih, ev: mm.ev.id, dep: mm.dep.id, evGol: mm.ev.gol, depGol: mm.dep.gol, hazirlik: true,
-      goller: mm.olaylar.filter((e) => e.tip === "gol").map((e) => ({ dk: e.dk, id: e.oyuncu.id, soyad: e.oyuncu.soyad, takim: e.takim })),
-    });
-    S.maclar.push(kayit(m));
-    for (const t of [m.ev, m.dep]) {
-      for (const id of t.oynayanlar) {
-        const o = oyuncu(id);
-        if (!o) continue;
-        o.kondisyon = Math.round(t.kond[id]);
-        o.maclar++;
-        o.gol += (m.istat[id] && m.istat[id].gol) || 0;
-        o.form = puan[id] || 6;
-      }
-    }
+    LIG.oyunculariIsle(S, m, puan);
+    S.maclar.push(LIG.macKaydi(S, m));
+    if (h.tur === "lig") { h.kayit.evGol = m.ev.gol; h.kayit.depGol = m.dep.gol; }
     const biz = m.ev.insan ? m.ev : m.dep, onlar = m.ev.insan ? m.dep : m.ev;
     const sonuc = Math.sign(biz.gol - onlar.gol);
     for (const o of kadro()) {
@@ -229,11 +249,22 @@ const HAFTA = (() => {
     S.itibar.taraftar = sinirla(S.itibar.taraftar + (sonuc > 0 ? 3 : sonuc < 0 ? -3 : 0), 0, 100);
     S.menajer.stres = sinirla(S.menajer.stres + (sonuc > 0 ? -8 : sonuc < 0 ? 10 : 2), 0, 100);
     S.gunluk.push({ tarih: S.tarih, metin: `${m.ev.k.kisa} ${m.ev.gol}-${m.dep.gol} ${m.dep.k.kisa}` });
-    // Diğer kulüplerin hazırlık maçları da bugün oynanır
-    const kalan = KULUPLER.map((k) => k.id).filter((id) => id !== m.ev.id && id !== m.dep.id);
-    const rnd = KARAKTER.tohumlu(Number(S.tarih.replace(/-/g, "")));
-    const karisik = kalan.map((id) => [rnd(), id]).sort((a, b) => a[0] - b[0]).map((x) => x[1]);
-    for (let i = 0; i + 1 < karisik.length; i += 2) S.maclar.push(kayit(MAC.hizliOyna(S, karisik[i], karisik[i + 1])));
+    for (const sk of biz.sakatlar) S.gunluk.push({ tarih: S.tarih, metin: `${DUNYA.adSoyad(oyuncu(sk.id))} sakatlandı: ${sk.tur}, ${sk.gun} gün` });
+    if (h.tur === "lig") {
+      YONETIM.macSonrasi(S, biz, onlar);
+      LIG.digerMaclar(S, LIG.hafta(S, S.tarih));
+    } else {
+      // Diğer kulüplerin hazırlık maçları da bugün oynanır
+      const kalan = S.lig.kulupler.filter((id) => id !== m.ev.id && id !== m.dep.id);
+      const rnd = KARAKTER.tohumlu(Number(S.tarih.replace(/-/g, "")));
+      const karisik = kalan.map((id) => [rnd(), id]).sort((a, b) => a[0] - b[0]).map((x) => x[1]);
+      for (let i = 0; i + 1 < karisik.length; i += 2) {
+        LIG.yapayZekaKadro(S, karisik[i]); LIG.yapayZekaKadro(S, karisik[i + 1]);
+        const mm = MAC.hizliOyna(S, karisik[i], karisik[i + 1]);
+        LIG.oyunculariIsle(S, mm, MAC.puanlar(mm));
+        S.maclar.push(LIG.macKaydi(S, mm));
+      }
+    }
     S.gun = { asama: "aksam", sonMac: true };
     kaydet(true);
   }
@@ -335,7 +366,7 @@ const HAFTA = (() => {
     return `${DUNYA.adSoyad(o)} ile Lale Sokak'taki lokantada yemek yediniz. ${soz} (Moral ${onceki} → ${o.moral})`;
   }
 
-  return { goster, gunBasla, hudYenile, maci, macBasligi, macYeri, ANTRENMAN_BASLANGIC, haftaGunu, GUN_ADI };
+  return { goster, gunBasla, hudYenile, maci, macBasligi, macYeri, macTuru, ANTRENMAN_BASLANGIC, haftaGunu, GUN_ADI, panel, sahneGoster, gunuBitir };
 })();
 
 // Oyun ekranının üstüne açılan büyük kâğıt (kadro, basın, gazete)

@@ -257,25 +257,43 @@ const SAHNE_MAC = (() => {
     const asist = e.asist && kisiler.get(e.asist.id);
     const nokta = (nx, ny) => ekrana(k, nx, ny);
     const kanat = Math.random() < 0.5 ? 0.22 : 0.78;
+    if (e.penalti) {
+      // Penaltı: herkes ceza sahası dışına, atıcı topun başına
+      for (const p of kisiler.values()) {
+        if (p === atan || p.yer === "KL") continue;
+        p.ozelHedef = ekrana(k, 0.7 + Math.random() * 0.05, 0.2 + Math.random() * 0.6);
+      }
+      const nokta2 = ekrana(k, 0.885, 0.5);
+      top.ucus = null; top.sahip = null; top.x = nokta2.x; top.y = nokta2.y + 6;
+      atan.ozelHedef = { x: nokta2.x + (sagda(k) ? -10 : 10), y: nokta2.y };
+      etiket = { metin: "Penaltı", p: atan, sure: 1.6 };
+      await bekle(1.6);
+      atan.ozelHedef = { x: nokta2.x + (sagda(k) ? -4 : 4), y: nokta2.y };
+      await bekle(0.3);
+    }
     // 1) Top bizde değilse bir orta saha oyuncusu kapar
-    if (!top.sahip || top.sahip.k !== k) {
+    if (e.penalti) { /* doğrudan şuta geç */ }
+    else if (!top.sahip || top.sahip.k !== k) {
       const os = takimKisileri(k).filter((p) => p.yer === "OS").sort((a, b) => Math.hypot(a.x - top.x, a.y - top.y) - Math.hypot(b.x - top.x, b.y - top.y))[0] || atan;
       if (top.ucus) await bekle(0.2);
       await pas(os, { takim: k, hiz: 220 });
     }
     // 2) Pası verecek oyuncu kanada ya da çizgiye koşar, top ona gider
-    if (asist && asist !== top.sahip) {
+    if (e.penalti) { /* pas yok */ }
+    else if (asist && asist !== top.sahip) {
       asist.ozelHedef = nokta(0.74, asist.yer === "OS" || asist.yer === "DF" ? kanat : 0.4 + Math.random() * 0.2);
       atan.ozelHedef = nokta(0.66, 0.5);
       await bekle(0.35);
       await pas(asist, { hiz: 200 });
     }
     // 3) Golcü ceza sahasına girer, pas ona gelir
-    atan.ozelHedef = nokta(0.82 + Math.random() * 0.06, 0.38 + Math.random() * 0.24);
-    await bekle(asist ? 0.45 : 0.6);
-    if (top.sahip !== atan) await pas(atan, { hiz: 210, h: asist ? 6 : 3 });
-    else await bekle(0.3);
-    await bekle(0.15);
+    if (!e.penalti) {
+      atan.ozelHedef = nokta(0.82 + Math.random() * 0.06, 0.38 + Math.random() * 0.24);
+      await bekle(asist ? 0.45 : 0.6);
+      if (top.sahip !== atan) await pas(atan, { hiz: 210, h: asist ? 6 : 3 });
+      else await bekle(0.3);
+      await bekle(0.15);
+    }
     // 4) Şut
     const kale = ekrana(k, 1, 0.5);
     const kenar = sagda(k) ? 1 : -1;

@@ -36,20 +36,32 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
   - `antrenman.js`: 6 antrenman türü, etkileri (gelişim, kondisyon, moral) ve sahnede oynatılacak tekrarlar.
   - `sahne-antrenman.js`: ana menüde süs rondo; oyunda her türün kendi canlandırması.
   - `hafta.js`: gün akışı (sabah kulüp, akşam hayat), maç sonuçlarının işlenmesi, kafe dedikoduları. `TAM`: büyük kâğıt panel.
-  - `kadro.js`: kadro tablosu, oyuncu kartı, maç öncesi kadro seçimi.
+  - `kadro.js`: kadro tablosu, oyuncu kartı (sözleşme, sakatlık, uzatma düğmesi). Eski `secimAc` artık kullanılmıyor.
+  - `taktik.js`: görsel taktik ekranı. Sahada dizilim, sürükle-bırak ya da tıkla-tıkla yer değiştirme, talimatlar, görevler, yedekler, rakip analizi. "onMac" (kayıtlı taktik) ve "mac" (maç içi) kipleri var.
+  - `lig.js`: fikstür (3 devre, 27 hafta, kış arası), puan tablosu, gol krallığı, maçın oyunculara etkisi (`oyunculariIsle`), diğer lig maçları, baraj, yeni sezon, lig ekranı.
+  - `yonetim.js`: sezon başı hedef ve bütçe toplantısı, maç sonrası güven, aylık kontrol (uyarı ve kovulma), sözleşme hatırlatmaları, sezon sonu ve yaz tatili.
+  - `sozlesme.js`: oyuncuyla maaş ve süre pazarlığı (transfer, serbest, uzatma). Maaş bütçesi aşılamaz.
+  - `transfer.js`: pencereler (temmuz–ağustos, ocak), teklif ve karşı teklif, serbest oyuncular, bize gelen teklifler, kulüpler arası transferler, transfer ekranı.
   - `basin.js`: cuma basın toplantısı (muhabir Mira Halvor).
   - `gazete.js`: pazar günü çıkan Sınır Postası.
   - `cizici.js`: etkin sahneyi kendi çözünürlüğünde (varsayılan 320×192) çizip tam sayı katıyla büyütür. "kapla" ana menü, "sigdir" oyun içi. `balon()` ve `ustCiz()` keskin yazı için.
   - `arayuz.js`: ekran geçişleri, açılır pencere, bildirim, `TARIH`, `para()`, Türkçe ek yardımcıları `ek(ad, "in"|"i"|"e"|"de"|"le"|"lik")` ve `sayiEk(n, ...)`.
   - `oyun.js`: oyun durumu `S`, yeni kariyer, kayıt yuvaları, eski kayıtların yükseltilmesi (`guncelDurum`), duraklatma, ayarlar, ana menü.
   - `depo.js`: kayıtlar. Masaüstünde `window.masaustu` köprüsünü, tarayıcıda localStorage'ı kullanır.
-- Kayıt: `%APPDATA%\KenarCizgisi\saves\kayit1..3.json` ve `ayarlar.json`. `KAYIT_SURUMU = 2`. v1 kayıtları açılırken `guncelDurum` ile tamamlanır (kadrolar o an üretilir).
-- **Oyun durumu (S):** tohum, kulupId, menajer (görünüş, enerji, stres), itibar (yönetim, taraftar), takimlar (kadro + taktik), gun (asama: sabah/aksam, rapor, aksamSonuc), maclar, gazeteler, basin, bilinen (öğrenilen rakip dizilişleri), duyulanlar, gunluk.
-- **Takvim:** Yeni kariyer 27 Temmuz 2026 Pazartesi başlar. Pzt–Per antrenman, Cuma basın ve kadro, Cumartesi hazırlık maçı, Pazar gazete ve izin.
-  - Hazırlık maçları: 1, 8, 15, 22 Ağustos. Sonrasında her cumartesi rastgele bir hazırlık maçı (lig Aşama 2'de).
-  - Maaş her ayın 1'inde yatar. Başlangıçta para ₡1.840, maaş ₡2.400. Kira ilk üç ay kulüpten.
-- **Maç motoru dengesi:** 2000'er maçlık denemelerde eşit takımlarda maç başına ~1,4–1,4 gol, %24 beraberlik; City–Kalvar ~3,3–1,1.
-  - Deneme betiği: `veri, karakter, dunya, mac-motoru` dosyaları Node `vm` ile yüklenip `MAC.hizliOyna` çağrılıyor.
+- Kayıt: `%APPDATA%\KenarCizgisi\saves\kayit1..3.json` ve `ayarlar.json`. `KAYIT_SURUMU = 3`. Eski kayıtlar açılırken `guncelDurum` ile tamamlanır (kadro, sözleşme, lig, bütçe o an eklenir).
+- **Oyun durumu (S):** tohum, kulupId, menajer (görünüş, enerji, stres), itibar (yönetim, taraftar), takimlar (kadro + taktik + butce), gun (asama: sabah/aksam, rapor, aksamSonuc), maclar, gazeteler, basin, bilinen (öğrenilen rakip dizilişleri), duyulanlar, gunluk.
+  - v3 ile gelenler: lig (fikstür ve sonuçlar), hazirlik, serbest (bonservissiz oyuncular), transfer (gelen teklifler, geçmiş), hedef, sezonlar, ekKulupler (alt ligden çıkanlar), kovuldu, ev.kira / ev.kiraBaslangic.
+  - Oyuncu: oz (7 özellik), kondisyon, moral, form, maas, bitis, sakatlik {gun, tur}, ceza (maç), sezon {mac, gol, asist, sari, kirmizi, puan}, gelisim, gorunus.
+  - Taktik: dizilis, anlayis, talimat {hat, pres, pas, genislik}, gorev {kaptan, penalti, duran}, ilk11.
+- **Takvim:** Yeni kariyer 27 Temmuz 2026 Pazartesi başlar. Pzt–Per antrenman, Cuma basın ve kadro, Cumartesi maç, Pazar gazete ve izin.
+  - Hazırlık maçları: 1, 8, 15, 22 Ağustos (sonraki sezonlarda `LIG.hazirlikUret`).
+  - **Lig:** 29 Ağustos 2026'dan 20 Mart 2027'ye 27 hafta. Kış arası 19 Aralık–2 Ocak. Sezon bitince baraj, değerlendirme ve yaz tatili. Yeni sezon temmuzun son pazartesi başlar.
+  - Maaş her ayın 1'inde yatar. Başlangıçta para ₡1.840, maaş ₡2.400. Kira (₡620) 1 Kasım 2026'dan itibaren maaştan düşer. Hedef tutarsa maaş +₡300.
+  - Yönetim güveni 28'in altına düşerse ay başında uyarı gelir, 12'nin altına düşerse kovulursun. Küme düşmek de kovulmak demek.
+- **Maç motoru dengesi (Aşama 2):** Ligin bütün eşleşmelerinde maç başına ~3,0 gol, %22 beraberlik, maç başına ~0,25 penaltı, takım başına ~0,2 sakatlık. City–Ova ~3,4–0,6.
+  - Talimatların etkisi küçük ama gerçek: önde hat maçı açar, yoğun pres kazandırır ama yorar (maç sonu kondisyon 76 yerine 71).
+  - Deneme betiği: `veri, karakter, dunya, mac-motoru` dosyaları Node `vm` ile yüklenip `MAC.hizliOyna` çağrılıyor. Atak olasılığı `0.165 * oran ** 0.9`.
+- **Otomatik oynatma testi:** Tarayıcıda bir bot (`window.oto(gün)`) düğmelere basarak günleri geçirir. Maçlarda "Sonuca geç"i kullanır. Uzun koşular arka planda başlatılıp `otoBitti`/`otoLog` ile izlenir, çünkü tek çağrı 45 saniyeyi geçemez.
 - Masaüstü: Electron 33.2.1 + electron-builder 25.1.8 (NSIS). `main.js` ve `preload.js` CARCERIA'dan uyarlandı.
 - **Otomatik güncelleme** `fatihlabsai/KenarCizgisi_surumler` deposundan geliyor. Kurulu oyun 4 saniye sonra ve her 4 saatte bir denetliyor.
   - Yeni sürüm iner ve kurulmaya hazır olunca ana menüde "Şimdi kur" düğmesi çıkıyor.
@@ -104,15 +116,15 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
 - Boş bir depoda sürüm oluşturulamıyor ("Repository is empty"). Bu yüzden yayın deposuna ilk kayıt olarak README eklendi.
 
 ## Durum (24.10.2026)
-- **Yayında olan son sürüm v0.2.0 (İlk hafta).** v0.1.1 kurulu olan oyunlar bunu otomatik alır.
-- Aşama 0 (v0.1.0) ve karakter oluşturma (v0.1.1) bitti.
-- **Aşama 1 bitti (v0.2.0, yayında):** İlk oyun haftası oynanabiliyor.
-  - Antrenman: 6 tür, her birinin sahnesi gerçek oyuncularla oynuyor, sonunda rapor geliyor.
-  - Cuma: basın toplantısı (cevaplar moral, taraftar ve yönetimi etkiler) ve kadro/taktik seçimi.
-  - Cumartesi: 2D hazırlık maçı. Taktik, 3 oyuncu değişikliği, yarı başına bir bağırma hakkı, devre arası, maç sonu puanları.
-  - Pazar: Sınır Postası (manşet, maçın hikâyesi ve basın alıntısı, diğer maçlar, kulis, şehirden, okur, hava).
-  - Akşamlar: evde dinlen, Gözcü Kafe (dedikodu; rakibin dizilişi öğrenilebilir), oyuncuyu yemeğe çağır.
-  - Kadro ekranı ve oyuncu kartı. Gazete arşivi.
-- **Aşama 1'de olmayanlar:** lig fikstürü ve puan tablosu, transfer, sakatlık, sözleşmeler. Bunlar Aşama 2'de.
-- 💡 Bu aşamada eklenen isimler: Başkan Ilian Dorsa, muhabir Mira Halvor, Gözcü Kafe ve sahibi Mavro.
-- Sıradaki adım: kullanıcının ilk haftayı oynayıp geri bildirim vermesi, sonra Aşama 2 (sezon).
+- **Yayında olan son sürüm v0.2.0 (İlk hafta).**
+- Aşama 0, karakter oluşturma ve Aşama 1 (v0.2.0) bitti.
+- **Aşama 2 bitti (v0.3.0, henüz yayınlanmadı):**
+  - Görsel taktik ekranı: maç öncesi ve maç içi, sürükle-bırak, 4 talimat, 3 görev, rakip analizi.
+  - Maç motoru: talimatlar, kaptan etkisi, penaltı (görevli atar), duran top asisti, sakatlık, eksik kalma, yer değiştirme.
+  - Carceria Ligi: 27 hafta, puan tablosu, fikstür, gol krallığı, kart cezaları, baraj, yeni sezon (yaşlanma, emeklilik, sözleşmesi bitenler, altyapıdan gençler).
+  - Transfer: pencereler, teklif ve karşı teklif, sözleşme pazarlığı, serbest oyuncular, bize gelen teklifler, kulüpler arası transferler.
+  - Yönetim: hedef ve bütçe toplantısı, güven, uyarı ve kovulma, sezon sonu değerlendirmesi. Kira kasımdan itibaren.
+  - Gazete: lig haftası, puan durumu, gol krallığı, gerçek transferler.
+  - Test botu iki sezon boyunca oynadı, hata çıkmadı.
+- 💡 Bu aşamada eklenen isimler: Ova Ligi (alt lig) ve kulüpleri (Harman Gücü, Tessel Demirspor, Ardessa Yıldızı, Brennik Union).
+- Sıradaki adım: kullanıcının sezonu oynayıp geri bildirim vermesi, sonra Aşama 3 (menajerin hayatı).

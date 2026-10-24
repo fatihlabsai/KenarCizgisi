@@ -1,5 +1,5 @@
 // Oyun durumu, yeni kariyer, kayıt yuvaları ve oyun ekranı.
-const KAYIT_SURUMU = 2;
+const KAYIT_SURUMU = 3;
 const YUVA_SAYISI = 3;
 const BASLANGIC_TARIHI = "2026-07-27"; // Pazartesi, ilk antrenman günü
 
@@ -42,6 +42,20 @@ function guncelDurum(k) {
   k.basin ||= [];
   k.bilinen ||= {};
   k.gunluk ||= [];
+  // v3: lig, sözleşmeler, bütçeler, talimatlar, serbest oyuncular, kira
+  const rnd = KARAKTER.tohumlu(k.tohum + 3);
+  for (const [kid, t] of Object.entries(k.takimlar)) {
+    for (const o of t.kadro) if (o.maas == null) DUNYA.sozlesmeVer(o, rnd, 2027 + Math.floor(rnd() * 3));
+    t.taktik.talimat = { ...VARSAYILAN_TALIMAT, ...(t.taktik.talimat || {}) };
+    DUNYA.gorevleriTamamla(t.taktik, t.kadro);
+    if (!t.butce) t.butce = DUNYA.ilkButce(kulupBul(kid), t.kadro);
+  }
+  if (!k.serbest) DUNYA.serbestUret(k);
+  k.hazirlik ||= HAZIRLIK.slice();
+  if (!k.lig) k.lig = LIG.fiksturUret(k, KULUPLER.map((x) => x.id), 2026);
+  k.ev.kira ??= 620;
+  k.ev.kiraBaslangic ??= "2026-11-01";
+  k.transfer ||= { teklifler: [], gelen: [], gecmis: [] };
   k.v = KAYIT_SURUMU;
   return k;
 }
@@ -301,6 +315,8 @@ $("mektup-imza").onclick = imzala;
 $("oyun-menu").onclick = duraklat;
 $("oyun-kadro").onclick = () => KADRO.listeAc(null);
 $("oyun-gazeteler").onclick = gazeteArsivi;
+$("oyun-lig").onclick = () => LIG.ekran();
+$("oyun-transfer").onclick = () => TRANSFER.ekran();
 
 // Pencere kapatılırken oyun açıksa kaydet
 if (MASAUSTU) window.masaustu.kapanirken(() => { if (S) kaydet(true); });

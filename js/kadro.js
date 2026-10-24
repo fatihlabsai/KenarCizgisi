@@ -22,7 +22,7 @@ const KADRO = (() => {
     const satirlar = t.kadro.slice().sort((a, b) => SIRA[a.mevki] - SIRA[b.mevki] || a.no - b.no).map((o) => `
       <tr data-id="${o.id}" class="${ilk11.has(o.id) ? "ilk11" : ""}">
         <td>${o.no}</td><td>${resim(o, k, 32)}</td>
-        <td class="sol"><b>${kacir(DUNYA.adSoyad(o))}</b></td>
+        <td class="sol"><b>${kacir(DUNYA.adSoyad(o))}</b>${o.sakatlik && o.sakatlik.gun > 0 ? ` <i class="etiket-kirmizi">sakat ${o.sakatlik.gun}g</i>` : ""}${o.ceza > 0 ? ` <i class="etiket-kirmizi">cezalı</i>` : ""}</td>
         <td>${o.mevki}</td><td>${o.yas}</td><td>${KOKEN_KISA[o.koken]}</td>
         <td><b>${Math.round(DUNYA.guc(o))}</b></td>
         <td class="${kondSinif(o.kondisyon)}">${o.kondisyon}</td>
@@ -56,10 +56,14 @@ const KADRO = (() => {
         <div class="kart-sag">
           <p>${MEVKI_ADI[o.mevki]} · ${o.yas} yaşında · ${KOKEN_ADI[o.koken]}</p>
           <p class="soluk">Güç ${Math.round(DUNYA.guc(o))} · Kondisyon ${o.kondisyon} · Moral ${o.moral} (${moralYazi})</p>
-          <p class="soluk">${o.maclar} maç · ${o.gol} gol${o.maclar ? ` · son maç puanı ${o.form.toFixed(1)}` : ""}</p>
+          <p class="soluk">${o.maclar} maç · ${o.gol} gol${o.maclar ? ` · son maç puanı ${o.form.toFixed(1)}` : ""}${o.sezon ? ` · bu sezon ${o.sezon.mac} maç, ${o.sezon.gol} gol` : ""}</p>
+          <p class="soluk">Sözleşme: ${o.bitis ? TARIH.kisa(o.bitis) : "–"} · ${para(o.maas)} / ay · değeri ${para(DUNYA.deger(o))}</p>
+          ${o.sakatlik && o.sakatlik.gun > 0 ? `<p class="uyari">Sakat: ${kacir(o.sakatlik.tur)}, ${o.sakatlik.gun} gün</p>` : ""}${o.ceza > 0 ? `<p class="uyari">Cezalı: ${o.ceza} maç</p>` : ""}
           <div class="oz-liste">${ozler.map(cubuk).join("")}</div>
         </div>
-      </div>`, [{ yazi: "Kapat", fn: ARAYUZ.pencereKapat }]);
+      </div>`, DUNYA.kulubu(S, o.id) === S.kulupId
+      ? [{ yazi: "Sözleşmeyi uzat", ikincil: true, fn: () => SOZLESME.gorusme({ o, tur: "uzatma", bitince: () => { kaydet(true); listeAc(null); } }) }, { yazi: "Kapat", fn: ARAYUZ.pencereKapat }]
+      : [{ yazi: "Kapat", fn: ARAYUZ.pencereKapat }]);
   }
 
   // ---------- Kadro seçimi ----------

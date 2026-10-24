@@ -43,7 +43,9 @@ const GAZETE = (() => {
       else g.manset = ilkMac ? "YENİ HOCAYA SOĞUK KARŞILAMA" : `${bizim.kisa.toLocaleUpperCase("tr-TR")} YİNE TAKILDI`;
 
       const ev = kulupBul(mac.ev), dep = kulupBul(mac.dep);
-      g.spot = `Hazırlık maçında ${ev.ad} ile ${dep.ad} karşılaştı: ${skor}. ${fark > 0 ? `Teknik direktör ${menajer.ad} ${menajer.soyad} yönetimindeki ${bizim.kisa} sahadan galip ayrıldı.` : fark === 0 ? "İki takım puanları paylaştı." : `${bizim.kisa}, ${menajer.soyad} yönetiminde sahadan mağlup ayrıldı.`}`;
+      const ligMaci = mac.tur === "lig";
+      const haftaNo = ligMaci && S.lig.haftalar.find((h) => h.tarih === dun);
+      g.spot = `${ligMaci ? `Carceria Ligi'nin ${haftaNo ? haftaNo.no + ". haftasında" : ""}` : "Hazırlık maçında"} ${ev.ad} ile ${dep.ad} karşılaştı: ${skor}. ${fark > 0 ? `Teknik direktör ${menajer.ad} ${menajer.soyad} yönetimindeki ${bizim.kisa} sahadan galip ayrıldı.` : fark === 0 ? "İki takım puanları paylaştı." : `${bizim.kisa}, ${menajer.soyad} yönetiminde sahadan mağlup ayrıldı.`}`;
 
       const liste = (a) => (a.length > 1 ? a.slice(0, -1).join(", ") + " ve " + a[a.length - 1] : a[0]);
       const golYazi = (taraf, kulup) => {
@@ -58,18 +60,28 @@ const GAZETE = (() => {
         else metin += `${once}, sonucu sakin karşıladı.`;
       } else metin += `${menajer.soyad}, maç öncesi basın toplantısına katılmadı.`;
       g.haberler.push({ baslik: "Maçın hikâyesi", metin, ana: true });
+    } else if (S.lig && S.lig.haftalar[0].maclar.some((m) => m.evGol != null)) {
+      const tb = LIG.tablo(S);
+      const lider = kulupBul(tb[0].id);
+      g.manset = `LİDER ${lider.kisa.toLocaleUpperCase("tr-TR")} TATİLDE DE ZİRVEDE`;
+      g.spot = `Carceria Ligi'nde maç yok. ${lider.ad} ${tb[0].P} puanla zirvede, ${kulupBul(S.kulupId).kisa} ${LIG.sira(S, S.kulupId)}. sırada.`;
+      g.haberler.push({ baslik: "Arada bir nefes", metin: `Kulüpler boş haftayı dinlenerek geçiriyor. ${kulupBul(S.kulupId).kisa} cephesinde ${menajer.soyad} antrenmanları sürdürüyor.`, ana: true });
     } else {
       g.manset = "YENİ SEZONA GERİ SAYIM";
-      g.spot = `Carceria Ligi'nde yeni sezon 29 Ağustos'ta başlıyor. Kulüpler hazırlık maçlarıyla kadrolarını deniyor.`;
+      g.spot = `Carceria Ligi'nde yeni sezon ${TARIH.kisa(S.lig.haftalar[0].tarih)} tarihinde başlıyor. Kulüpler hazırlık maçlarıyla kadrolarını deniyor.`;
       g.haberler.push({ baslik: "Kalvar'da yeni dönem", metin: `Kalvar Spor'un yeni teknik direktörü ${menajer.ad} ${menajer.soyad} antrenmanlara başladı. Kulüp, geçen sezonu dokuzuncu sırada bitirmişti.`, ana: true });
     }
 
-    // Kulis: büyük kulüplerden biri bir oyuncuya göz koymuş
-    const alici = kulupBul(al(["city", "dinamo", "union"]));
-    const kaynakId = Math.random() < 0.5 ? S.kulupId : al(KULUPLER.filter((k) => k.id !== alici.id && k.id !== S.kulupId)).id;
+    // Kulis: geçen haftanın gerçek transferleri; yoksa bir söylenti
+    const yeniTransferler = (S.transfer ? S.transfer.gecmis : []).filter((x) => x.tarih > TARIH.ekle(S.tarih, -7) && x.kime);
+    if (yeniTransferler.length) {
+      g.haberler.push({ baslik: "Transfer", metin: yeniTransferler.slice(0, 3).map((x) => `${x.ad}, ${x.kimden ? ek(kulupBul(x.kimden).kisa, "den") : "serbest olarak"} ${kulupBul(x.kime).kisa} formasını giydi${x.bedel ? ` (${para(x.bedel)})` : ""}.`).join(" ") });
+    }
+    const alici = kulupBul(al(["city", "dinamo", "union"].filter((id) => S.lig.kulupler.includes(id))) || "city");
+    const kaynakId = Math.random() < 0.5 ? S.kulupId : al(S.lig.kulupler.filter((id) => id !== alici.id && id !== S.kulupId));
     const yildiz = S.takimlar[kaynakId].kadro.slice().sort((a, b) => DUNYA.guc(b) - DUNYA.guc(a))[Math.floor(Math.random() * 3)];
     const bedel = Math.max(5000, Math.round(((DUNYA.guc(yildiz) - 40) * 900) / 500) * 500);
-    g.haberler.push({ baslik: "Kulis", metin: `${alici.kisa} cephesinin ${kulupBul(kaynakId).kisa} forması giyen ${DUNYA.adSoyad(yildiz)} için harekete geçtiği konuşuluyor. Kulislerde ${para(bedel)} telaffuz ediliyor.` });
+    if (!yeniTransferler.length) g.haberler.push({ baslik: "Kulis", metin: `${alici.kisa} cephesinin ${kulupBul(kaynakId).kisa} forması giyen ${DUNYA.adSoyad(yildiz)} için harekete geçtiği konuşuluyor. Kulislerde ${para(bedel)} telaffuz ediliyor.` });
 
     // Şehirden
     const kullanilan = new Set(S.gazeteler.flatMap((x) => x.haberler.map((h) => h.baslik)));
@@ -78,6 +90,13 @@ const GAZETE = (() => {
     g.haberler.push({ baslik: sehir.baslik, metin: sehir.metin, sehir: true });
 
     g.diger = digerleri.map((m) => `${kulupBul(m.ev).kisa} ${m.evGol}-${m.depGol} ${kulupBul(m.dep).kisa}`);
+    g.digerBaslik = digerleri.some((m) => m.tur === "lig") ? "Ligde bu hafta" : "Hazırlık maçları";
+    if (S.lig && S.lig.haftalar[0].maclar.some((m) => m.evGol != null)) {
+      g.tablo = LIG.tablo(S).slice(0, 5).map((r, i) => `${i + 1}. ${kulupBul(r.id).kisa} ${r.P}`);
+      g.bizimSira = LIG.sira(S, S.kulupId);
+      const kral = LIG.golKralligi(S, 1)[0];
+      if (kral) g.kral = `${DUNYA.adSoyad(kral.o)} (${kulupBul(kral.kid).kisa}) ${kral.o.sezon.gol} gol`;
+    }
     g.okur = al(OKUR);
     g.hava = `Kalvar ${24 + Math.floor(Math.random() * 8)}°, ${al(HAVA)}`;
     return g;
@@ -98,10 +117,12 @@ const GAZETE = (() => {
             ${yan.filter((h) => h.sehir).map((h) => `<h3>Şehirden: ${kacir(h.baslik)}</h3><p>${kacir(h.metin)}</p>`).join("")}
             <h3>Okurdan</h3><p class="okur">"${kacir(g.okur)}"</p></div>
           <div>
-            ${g.diger && g.diger.length ? `<h3>Hazırlık maçları</h3><ul>${g.diger.map((d) => `<li>${kacir(d)}</li>`).join("")}</ul>` : ""}
+            ${g.diger && g.diger.length ? `<h3>${g.digerBaslik || "Hazırlık maçları"}</h3><ul>${g.diger.map((d) => `<li>${kacir(d)}</li>`).join("")}</ul>` : ""}
+            ${g.tablo ? `<h3>Puan durumu</h3><ul class="duz">${g.tablo.map((x) => `<li>${kacir(x)}</li>`).join("")}</ul>${g.bizimSira > 5 ? `<p>… ${g.bizimSira}. ${kacir(kulupBul(S.kulupId).kisa)}</p>` : ""}` : ""}
+            ${g.kral ? `<h3>Gol krallığı</h3><p>${kacir(g.kral)}</p>` : ""}
             ${yan.filter((h) => !h.sehir).map((h) => `<h3>${kacir(h.baslik)}</h3><p>${kacir(h.metin)}</p>`).join("")}
             <h3>Hava</h3><p>${kacir(g.hava)}</p>
-            <h3>Lig</h3><p>Carceria Ligi'nde yeni sezon 29 Ağustos'ta başlıyor.</p>
+            ${g.tablo ? "" : `<h3>Lig</h3><p>Carceria Ligi'nde yeni sezon ${S.lig ? TARIH.kisa(S.lig.haftalar[0].tarih) : "29 Ağustos"} tarihinde başlıyor.</p>`}
           </div>
         </div>
         <div class="dugme-satiri"><button class="dugme" id="gazete-kapat">Gazeteyi katla</button></div>

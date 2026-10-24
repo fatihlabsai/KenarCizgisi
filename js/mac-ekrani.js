@@ -8,13 +8,14 @@ const MAC_EKRANI = (() => {
 
   const biz = () => (bizK === "ev" ? m.ev : m.dep);
 
-  function ac(S, evId, depId, cb) {
-    m = MAC.yeni(S, evId, depId);
+  // tur: "lig" ya da "hazirlik"
+  function ac(S, evId, depId, cb, tur = "hazirlik") {
+    m = MAC.yeni(S, evId, depId, tur);
     bizK = m.ev.insan ? "ev" : "dep";
     bitince = cb; bitti = false; duraklat = false; isleniyor = false; birikim = 0; hiz = 1;
     gorunenSkor = { ev: 0, dep: 0 };
     ARAYUZ.ekranGoster("ekran-mac");
-    ARAYUZ.escYoksa = taktikPenceresi;
+    ARAYUZ.escYoksa = () => (TAM.acik() ? TAM.kapat() : taktikPenceresi());
     $("sb-ev-ad").textContent = m.ev.k.ad;
     $("sb-dep-ad").textContent = m.dep.k.ad;
     $("sb-ev-renk").style.background = m.ev.k.forma;
@@ -31,7 +32,7 @@ const MAC_EKRANI = (() => {
 
   // ---------- Akış ----------
   function tik(dt) {
-    if (!m || bitti || duraklat || ARAYUZ.pencereAcik()) return;
+    if (!m || bitti || duraklat || ARAYUZ.pencereAcik() || TAM.acik()) return;
     if (isleniyor || SAHNE_MAC.mesgul()) return;
     if (m.bitti) { sonEkrani(); return; }
     if (m.devreArasi) { devreArasi(); return; }
@@ -92,7 +93,7 @@ const MAC_EKRANI = (() => {
     m.devreArasi = false;
     tabela();
     ARAYUZ.pencereAc("Devre arası", `<p class="buyuk-skor">${kacir(m.ev.k.kisa)} ${gorunenSkor.ev} - ${gorunenSkor.dep} ${kacir(m.dep.k.kisa)}</p>${$("mac-istat").innerHTML}`, [
-      { yazi: "Taktik", ikincil: true, fn: () => taktikPenceresi(devreArasiDevam, "Devre arası") },
+      { yazi: "Taktik", ikincil: true, fn: () => { ARAYUZ.pencereKapat(); taktikPenceresi(devreArasiDevam); } },
       { yazi: "İkinci yarı", fn: devreArasiDevam },
     ], { esc: devreArasiDevam });
   }
@@ -149,33 +150,10 @@ const MAC_EKRANI = (() => {
   }
 
   // ---------- Kenardan müdahale ----------
-  function taktikPenceresi(geri, baslik = "Taktik") {
+  // Taktik: görsel taktik ekranı maç kipinde açılır. Değişiklikler anında maça işler.
+  function taktikPenceresi(geri) {
     if (!m || bitti) return;
-    const t = biz();
-    const kapat2 = typeof geri === "function" ? geri : ARAYUZ.pencereKapat;
-    const sec = (tur, deger, yazi, aktif) => `<button class="secenek" data-${tur}="${deger}" aria-pressed="${aktif}">${yazi}</button>`;
-    const sahadakiler = MAC.sahada(t).map((x) => x.o);
-    const kalan = 3 - t.degisiklik;
-    const kondRenk = (k) => (k >= 70 ? "iyi" : k >= 45 ? "" : "kotu");
-    ARAYUZ.pencereAc(baslik, `
-      <div class="ayar"><div class="ayar-baslik">Diziliş</div><div class="secenekler">${Object.keys(DIZILISLER).map((d) => sec("diz", d, d, d === t.dizilis)).join("")}</div></div>
-      <div class="ayar"><div class="ayar-baslik">Oyun anlayışı</div><div class="secenekler">${Object.entries(ANLAYISLAR).map(([k, a]) => sec("anl", k, a.ad, k === t.anlayis)).join("")}</div></div>
-      <div class="ayar"><div class="ayar-baslik">Oyuncu değişikliği <span>${kalan} hak kaldı</span></div>
-        ${kalan > 0 && t.yedekler.length ? `<div class="degisiklik">
-          <select id="t-cikan">${sahadakiler.map((o) => `<option value="${o.id}">${o.no} · ${kacir(o.soyad)} (${t.yerOf[o.id]}) · kondisyon ${Math.round(t.kond[o.id])}</option>`).join("")}</select>
-          <span>yerine</span>
-          <select id="t-giren">${t.yedekler.map((o) => `<option value="${o.id}">${o.no} · ${kacir(o.soyad)} (${o.mevki})</option>`).join("")}</select>
-          <button class="dugme" id="t-degis">Değiştir</button></div>` : ""}
-        <div class="kond-listesi">${sahadakiler.map((o) => `<span class="kond ${kondRenk(t.kond[o.id])}">${kacir(o.soyad)} ${Math.round(t.kond[o.id])}</span>`).join("")}</div>
-      </div>`, [{ yazi: typeof geri === "function" ? "İkinci yarıya başla" : "Maça dön", fn: kapat2 }], { esc: kapat2 });
-    const govde = $("pencere-govde");
-    govde.querySelectorAll("[data-diz]").forEach((b) => { b.onclick = () => { MAC.taktikDegis(m, t, { dizilis: b.dataset.diz }); akisEkle(m.olaylar[m.olaylar.length - 1]); taktikPenceresi(geri, baslik); }; });
-    govde.querySelectorAll("[data-anl]").forEach((b) => { b.onclick = () => { MAC.taktikDegis(m, t, { anlayis: b.dataset.anl }); akisEkle(m.olaylar[m.olaylar.length - 1]); taktikPenceresi(geri, baslik); }; });
-    const d = $("t-degis");
-    if (d) d.onclick = () => {
-      if (MAC.degistir(m, t, $("t-cikan").value, $("t-giren").value)) akisEkle(m.olaylar[m.olaylar.length - 1]);
-      taktikPenceresi(geri, baslik);
-    };
+    TAKTIK.ac({ mod: "mac", m, t: biz(), olaylar: akisEkle, devreArasi: typeof geri === "function", geri: () => { tabela(); if (typeof geri === "function") geri(); } });
   }
 
   function bagirPenceresi() {

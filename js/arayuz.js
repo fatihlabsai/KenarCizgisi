@@ -24,6 +24,7 @@ function ek(ad, tur) {
     i: (sesliyleBiter ? "y" : "") + dort,
     e: (sesliyleBiter ? "y" : "") + iki,
     de: (sertSessiz ? "t" : "d") + iki,
+    den: (sertSessiz ? "t" : "d") + iki + "n",
     le: (sesliyleBiter ? "y" : "") + "l" + iki,
     lik: "l" + dort + "k",
   }[tur];

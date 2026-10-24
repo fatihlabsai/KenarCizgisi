@@ -181,7 +181,7 @@ Her gün **gündüz kulüpte**, **akşam hayatında** geçer. Akşamları seçim
 |---|---|---|
 | **0. İskelet** ✅ | Proje, pencere, ana menü, kayıt, `.exe` derleme | Boş ama açılan bir oyun |
 | **1. İlk dilim** ✅ | 1 kulüp, 1 hafta: antrenman sahnesi → 2D maç → maaş → daire → gazete | Oyunun hissi görülür |
-| **2. Sezon** | Carceria Ligi, fikstür, puan tablosu, görsel taktik ekranı, transfer, sözleşmeler | Bir sezon baştan sona oynanır |
+| **2. Sezon** ✅ | Carceria Ligi, fikstür, puan tablosu, görsel taktik ekranı, transfer, sözleşmeler | Bir sezon baştan sona oynanır |
 | **3. Hayat** | Ev ve araba, yatırımlar, şehir haritası, ilişkiler, enerji/stres/itibar | Para gerçekten bir işe yarar |
 | **4. Dünya** | Komşu ligler, Antlaşma Kupası, menajer kariyerleri, Demir Masa | Dünya yaşamaya başlar |
 | **5. Cila** | Ses, müzik, denge, seslendirme | Yayına hazır |
@@ -201,7 +201,7 @@ Her gün **gündüz kulüpte**, **akşam hayatında** geçer. Akşamları seçim
   - Bir oyuncuyu yemeğe çağır: ₡60, oyuncunun morali yükselir.
 - **Yeni isimler:** Başkan Ilian Dorsa, muhabir Mira Halvor, Gözcü Kafe ve sahibi Mavro.
 
-## 9.2 Aşama 2 planı (💡 onay bekliyor)
+## 9.2 Aşama 2 planı ✅ (kullanıcı onayladı, yapıldı)
 
 ### Taktik ekranı ✅ (kullanıcı istedi)
 - **Saha görünümü:** Yukarıdan bakılan sahada, seçilen dizilişe göre 11 oyuncu durur. Her oyuncunun forması, numarası ve adı görünür.

@@ -34,7 +34,16 @@ const KULUPLER = [
   { id: "kuzey", ad: "Kuzey Ovası FK", kisa: "Ova", sehir: "Kalvar çevresi", stad: "Harman Sahası", forma: "#e07a2a", sort: "#2b2f3a", guc: 47, koken: { c: 0.85, s: 0.08, o: 0.07 } },
   { id: "sentinel", ad: "Sentinel Carceria", kisa: "Sentinel", sehir: "Carceria City", stad: "Semt Sahası", forma: "#1f2a44", sort: "#c8c8c8", guc: 49, koken: { c: 0.8, s: 0.1, o: 0.1 } },
 ];
-const kulupBul = (id) => KULUPLER.find((k) => k.id === id);
+// Ligden düşenlerin yerine çıkan kulüpler kayıtta tutulur (S.ekKulupler)
+const kulupBul = (id) => KULUPLER.find((k) => k.id === id) || (typeof S !== "undefined" && S && S.ekKulupler ? S.ekKulupler.find((k) => k.id === id) : null);
+
+// Ova Ligi'nden (alt lig) çıkabilecek kulüpler: barajı kazanırsa Carceria Ligi'ne katılır
+const ALT_LIG = [
+  { id: "harman", ad: "Harman Gücü", kisa: "Harman", sehir: "Kalvar Ovası", stad: "Değirmen Sahası", forma: "#9a6b3a", sort: "#f0e6c8", guc: 46, koken: { c: 0.85, s: 0.08, o: 0.07 } },
+  { id: "tesseldemir", ad: "Tessel Demirspor", kisa: "Demirspor", sehir: "Tessel", stad: "Atölye Sahası", forma: "#5d6b78", sort: "#e0b03a", guc: 47, koken: { c: 0.8, s: 0.1, o: 0.1 } },
+  { id: "ardessayildiz", ad: "Ardessa Yıldızı", kisa: "Yıldız", sehir: "Ardessa", stad: "Liman Sahası", forma: "#2c6fb0", sort: "#ffffff", guc: 46, koken: { c: 0.4, s: 0.05, o: 0.55 } },
+  { id: "brennikunion", ad: "Brennik Union", kisa: "B. Union", sehir: "Brennik", stad: "Sınır Sahası", forma: "#b23a48", sort: "#1e1e1e", guc: 46, koken: { c: 0.4, s: 0.55, o: 0.05 } },
+];
 
 // Kalvar Spor'un hazırlık maçları (lig fikstürü Aşama 2'de gelecek)
 const HAZIRLIK = [
@@ -58,6 +67,32 @@ const ANLAYISLAR = {
   hucum: { ad: "Hücum", hucum: 1.12, savunma: 0.88 },
 };
 
-const MEVKI_ADI = { KL: "Kaleci", DF: "Defans", OS: "Orta saha", FV: "Forvet" };
+// Takım talimatları: maç motorundaki çarpanlar. Boş olanlar etkisiz.
+const TALIMATLAR = {
+  hat: { ad: "Savunma hattı", secenek: {
+    geride: { ad: "Geride", aciklama: "Arkaya top yemezsin ama orta saha boşalır.", savunma: 1.07, orta: 0.97, hucum: 0.96, rakipIsabet: -0.03 },
+    normal: { ad: "Normal", aciklama: "" },
+    onde: { ad: "Önde", aciklama: "Rakibi sıkıştırırsın, arkaya atılan toplara açık kalırsın.", orta: 1.05, hucum: 1.03, savunma: 0.95, rakipIsabet: 0.05 },
+  } },
+  pres: { ad: "Pres", secenek: {
+    az: { ad: "Az", aciklama: "Oyuncular daha az yorulur, rakip rahat oynar.", orta: 0.96, yorgunluk: 0.88 },
+    normal: { ad: "Normal", aciklama: "" },
+    yogun: { ad: "Yoğun", aciklama: "Top kazanırsın ama ikinci yarıda bacaklar ağırlaşır.", orta: 1.07, savunma: 1.02, yorgunluk: 1.22 },
+  } },
+  pas: { ad: "Pas", secenek: {
+    kisa: { ad: "Kısa", aciklama: "Topa daha çok sahip olursun, atak yavaşlar.", orta: 1.05, hucum: 0.97 },
+    karisik: { ad: "Karışık", aciklama: "" },
+    uzun: { ad: "Uzun", aciklama: "Doğrudan oyun. Hızlı forvetlerin varsa işe yarar.", orta: 0.94, hucum: 1.03, hizBonus: true },
+  } },
+  genislik: { ad: "Genişlik", secenek: {
+    dar: { ad: "Dar", aciklama: "Ortayı kapatırsın, kanatlardan az atak üretirsin.", savunma: 1.03, hucum: 0.98 },
+    normal: { ad: "Normal", aciklama: "" },
+    genis: { ad: "Geniş", aciklama: "Sahayı açarsın, arkada boşluk kalır.", hucum: 1.04, savunma: 0.97 },
+  } },
+};
+const VARSAYILAN_TALIMAT = { hat: "normal", pres: "normal", pas: "karisik", genislik: "normal" };
+const SAKATLIK_TURLERI = ["arka adale", "ayak bileği burkulması", "diz bağı zorlanması", "kasık", "baldır", "omuz çıkığı", "darbe"];
+
+const MEVKI_ADI ={ KL: "Kaleci", DF: "Defans", OS: "Orta saha", FV: "Forvet" };
 const OZELLIK_ADI = { hiz: "Hız", sut: "Şut", pas: "Pas", teknik: "Teknik", savunma: "Savunma", kaleci: "Kalecilik", dayaniklilik: "Dayanıklılık" };
 const OZELLIK_KISA = { hiz: "Hız", sut: "Şut", pas: "Pas", teknik: "Tek", savunma: "Sav", kaleci: "Kal", dayaniklilik: "Day" };

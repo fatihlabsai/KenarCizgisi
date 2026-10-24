@@ -19,11 +19,11 @@ const ANTRENMAN = (() => {
     const kadro = S.takimlar[S.kulupId].kadro;
     const hocaF = S.menajer.enerji < 30 ? 0.8 : 1;
     // Her oyuncunun bugünkü performansı: ilgili özellikleri, kondisyonu ve biraz şans
-    const perf = kadro.map((o) => {
+    const perf = kadro.filter((o) => !(o.sakatlik && o.sakatlik.gun > 0)).map((o) => {
       const oz = o.mevki === "KL" && (tur === "sut" || tur === "duran") ? ["kaleci"] : t.ozellik;
       return { o, p: ort(o, oz) + (o.kondisyon - 75) / 12 + gauss(Math.random) * 3 };
     }).sort((a, b) => b.p - a.p);
-    const rapor = { tur, parlayan: [], kotu: [], gelisenler: [], tekrarlar: [] };
+    const rapor = { tur, parlayan: [], kotu: [], gelisenler: [], tekrarlar: [], sakatlananlar: [] };
     if (tur !== "dinlenme") {
       rapor.parlayan = perf.slice(0, 2).map((x) => x.o.id);
       rapor.kotu = [perf[perf.length - 1].o.id];
@@ -34,20 +34,33 @@ const ANTRENMAN = (() => {
       // Gelişim: birikir, 1'i geçince özellik bir puan artar
       const ozler = o.mevki === "KL" && (tur === "sut" || tur === "duran") ? ["kaleci"] : t.ozellik;
       for (const k of ozler) {
-        o.gelisim[k] = (o.gelisim[k] || 0) + 0.13 * (t.carpan || 1) * yasCarpani(o.yas) * (0.7 + 0.6 * iyilik) * hocaF;
+        o.gelisim[k] = (o.gelisim[k] || 0) + 0.032 * (t.carpan || 1) * yasCarpani(o.yas) * (0.7 + 0.6 * iyilik) * hocaF;
         if (o.gelisim[k] >= 1 && o.oz[k] < 20) { o.gelisim[k] -= 1; o.oz[k]++; rapor.gelisenler.push({ id: o.id, ozellik: k, yeni: o.oz[k] }); }
       }
       o.kondisyon = Math.round(sinirla(o.kondisyon - t.yorgunluk * (1.15 - o.oz.dayaniklilik / 40), 25, 100));
+      // Yoğun ve yorgunken yapılan antrenman küçük de olsa sakatlık riski taşır
+      const risk = t.yorgunluk > 0 ? (t.yorgunluk / 13) * 0.006 * (o.kondisyon < 60 ? 2 : 1) : 0;
+      if (DUNYA.uygun(o) && Math.random() < risk) {
+        o.sakatlik = { gun: 2 + Math.floor(Math.random() * 9), tur: SAKATLIK_TURLERI[Math.floor(Math.random() * SAKATLIK_TURLERI.length)] };
+        rapor.sakatlananlar.push({ id: o.id, ...o.sakatlik });
+      }
     });
     for (const id of rapor.parlayan) { const o = kadro.find((x) => x.id === id); o.moral = Math.min(100, o.moral + 3); }
     for (const id of rapor.kotu) { const o = kadro.find((x) => x.id === id); o.moral = Math.max(0, o.moral - 2); }
+    // Bir sonraki puana en yakın olanlar (çalışılan özelliklerde)
+    if (t.ozellik.length) {
+      const yakin = [];
+      for (const x of perf) for (const k of t.ozellik) if (x.o.mevki !== "KL" && x.o.oz[k] < 20) yakin.push({ id: x.o.id, ozellik: k, oran: Math.max(0, x.o.gelisim[k] || 0) });
+      rapor.yakin = yakin.sort((a, b) => b.oran - a.oran).slice(0, 3);
+    }
     rapor.tekrarlar = tekrarlar(tur, kadro);
     rapor.ortKond = Math.round(kadro.reduce((a, o) => a + o.kondisyon, 0) / kadro.length);
     return rapor;
   }
 
   // Sahnede oynatılacak tekrarlar (kim, ne oldu)
-  function tekrarlar(tur, kadro) {
+  function tekrarlar(tur, kadro0) {
+    const kadro = kadro0.filter((o) => !(o.sakatlik && o.sakatlik.gun > 0));
     const mevki = (m) => kadro.filter((o) => o.mevki === m);
     const karistir = (a) => a.map((x) => [Math.random(), x]).sort((p, q) => p[0] - q[0]).map((x) => x[1]);
     const kaleci = mevki("KL").sort((a, b) => b.oz.kaleci - a.oz.kaleci)[0];
