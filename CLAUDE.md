@@ -104,9 +104,9 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
 - Boş bir depoda sürüm oluşturulamıyor ("Repository is empty"). Bu yüzden yayın deposuna ilk kayıt olarak README eklendi.
 
 ## Durum (24.10.2026)
-- **Yayında olan son sürüm v0.1.1.** Kullanıcı bunu GitHub'dan kurdu. Bundan sonraki sürümler otomatik gelir.
+- **Yayında olan son sürüm v0.2.0 (İlk hafta).** v0.1.1 kurulu olan oyunlar bunu otomatik alır.
 - Aşama 0 (v0.1.0) ve karakter oluşturma (v0.1.1) bitti.
-- **Aşama 1 bitti (v0.2.0, henüz yayınlanmadı):** İlk oyun haftası oynanabiliyor.
+- **Aşama 1 bitti (v0.2.0, yayında):** İlk oyun haftası oynanabiliyor.
   - Antrenman: 6 tür, her birinin sahnesi gerçek oyuncularla oynuyor, sonunda rapor geliyor.
   - Cuma: basın toplantısı (cevaplar moral, taraftar ve yönetimi etkiler) ve kadro/taktik seçimi.
   - Cumartesi: 2D hazırlık maçı. Taktik, 3 oyuncu değişikliği, yarı başına bir bağırma hakkı, devre arası, maç sonu puanları.
