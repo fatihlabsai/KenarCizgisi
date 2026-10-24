@@ -46,7 +46,7 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
   - `sehir.js`: Kalvar haritası. 4 bölge (lale, carsi, avlu, ova) ve 9 iç mekân (3 ev, kafe, lokanta, banka, emlak, eşya, galeri).
     - Bölgeler sadece veri: zemin, binalar (çatı + cephe), kapılar, ağaç/lamba/bank, engel ızgarası, bölge çıkışları, gezinti noktaları.
     - Binanın kapısına alttaki kaldırım karesinden girilir.
-  - `sahne-dunya.js`: yürünebilir dünya. Sokakta 400×240, iç mekânda 280×168 görüş.
+  - `sahne-dunya.js`: yürünebilir dünya. Sokakta 400×240, iç mekânda 280×168 görüş. `tamResim(bolgeId, ay)` bir bölgenin insansız tam resmini verir (gündüz sokak sahnesi ve harita için).
     - Hareket: oklar/WASD ya da fareyle tıklama (karo ızgarasında genişlik öncelikli yol bulma). Çarpışma ayak kutusuyla yapılır.
     - Kamera menajeri takip eder. Mevsime göre karanlık, lamba ve pencere ışıkları, yağmur.
     - Yürüyen insanlar ve yoldan geçen arabalar. E / Enter / Boşluk ile etkileşim.
@@ -91,6 +91,8 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
 
 ## Grafikler
 - Kenney Roguelike serisinin üç sayfası `assets/kenney/` altında: `sehir.png`, `ic-mekan.png`, `karakter.png`.
+- **Sokaklar RPG Urban Pack ile çiziliyor** (`assets/kenney/urban.png`, sayfa adı "urban"). Kullanıcı Aşama 4'te bunu seçti.
+  - `sehir.png` artık sadece iç mekân zeminlerinde, maç ve antrenman sahnelerinde kullanılıyor.
   - Karolar 16×16, aralarında 1 piksel boşluk var. Koordinatlar (sütun, satır) olarak yazılır.
   - Çizim: `KAYNAK.karo(ctx, sayfa, s, r, x, y)`.
 - **Karakterler katmanlardan oluşur:** ten (0. sütun, satır 0–2), şort (3), ayakkabı (4), üst (6–17), saç ve sakal (19–26). Birleştirmeyi `KARAKTER.yap(tarif)` yapar.
@@ -101,7 +103,16 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
     - (0,2) ve (2–3, 0) gibi karolarda saç ve bıyık bir arada çizilmiş, bunlar katalogda yok.
   - **Üst giyim:** Renk grupları siyah (14,5), bej (10,5), turkuaz (10,0), turuncu (6,0), yeşil (6,5) ve lila (14,0). Her grupta aynı modeller aynı yerde. 4. satır ve 8–9. satırlar zırh görünümlü, kullanılmıyor.
   - `KARAKTER.KATALOG` seçenekleri tutar. Menajerin görünüşü sıra numaralarından oluşur (`S.menajer.gorunus`) ve `KARAKTER.gorunus(g)` ile çizilir.
-- **Bilinen karolar:**
+- **Urban karoları (sütun, satır):**
+  - Kenarlı 3×3 alanlar (sol üst köşe): çim (0,0), bej taş (0,3), gri kaldırım (8,0), gri çatı (8,3), su (8,6). `SEHIR` içindeki `alan()` kenarları seçer.
+  - Asfalt düz (9,16)/(9,17), kesik orta çizgi (1,16), yaya geçidi (0,15–17), park kutusu (5–6,16–17).
+  - Cephe: kırmızı tuğla 17–19 / turuncu tuğla 17–19 sütunları (satır 0–3 ve 4–7), sade türleri 20–22, köşe sütunu 16. Satırlar: 0 saçak, 1 kat silmesi, 2 düz duvar, 3 zemin kat.
+  - Pencereler bej çerçeve (11–13, 12–14), gri çerçeve (11–13, 15–17). Kapılar (13–15, 9–10), demir kapı (15,12). Vitrin camı (8–10,14). Tente (4–6,12, yeşil; diğer renkler ton kaydırma).
+  - Ağaçlar (16–17, 8–10), sonbahar (16–17, 11–13), tek karoluk çalı ve fidan (22, 8–13), koru 3×3 (18–20, 8–10 / 11–13).
+  - Lamba (3,6–7), park feneri (7,6–7), durak tabelası (4,6–7), banklar (7,9) ve (0,10), çöp (9–10, 9–10), posta kutusu (8,11), çitler (4–6,13 tel; 4–6,14 ahşap).
+  - Arabalar: önden (15–16, 14–17), yukarıdan (17, 14–17; burnu aşağı). Yolda giden arabalar 90° döndürülüyor (`SAHNE_DUNYA.arabaResmi`).
+  - Kasabalılar 23–26. sütunlar, kişi başına 3 satır (duruş + iki adım). 23 sola, 24 öne, 25 arkaya bakar, 26 sola bakanın aynası. 1 ve 5 kadın.
+- **Eski sayfanın bilinen karoları:**
   - sehir: çim (0,24), kaldırım (1,20), bej zemin (3,19), asfalt (11,19), koni (14,18), tel örgü (17,18), lamba (1,16–18), ağaç ve çalılar (31–36, 10–13)
   - ic: mutfak (0–9, 12–17), tek kişilik yatak (8–15, 6–7), halı (16–18, 8–11), koltuk (21–22, 4–5)
 
@@ -150,4 +161,6 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
   - "Ev vb. yapıların görüntüleri çok kötü."
   - "M'ye basınca açılan bir harita olsun."
   - İkisi de Aşama 4'ün ilk işi olarak listede (TASARIM.md 9.4).
-- Sıradaki adım: Aşama 4 planının onayı (TASARIM.md 9.5).
+- **Aşama 4 başladı (plan onaylandı, TASARIM.md 9.5):**
+  - 1. iş bitti: Kalvar RPG Urban Pack ile yeniden kuruldu (henüz yayınlanmadı).
+  - Sıradaki iş: M haritası.

@@ -9,9 +9,9 @@ const EKONOMI = (() => {
   };
   const ARABALAR = [
     { id: "bisiklet", ad: "Bisiklet", fiyat: 350, gider: 0, itibar: 0, sure: 15 },
-    { id: "ova1300", ad: "Ova 1300 (ikinci el)", fiyat: 3800, gider: 60, itibar: 2, sure: 10, satir: 24 },
-    { id: "brio", ad: "Ferrano Brio (ikinci el)", fiyat: 6900, gider: 85, itibar: 4, sure: 10, satir: 16 },
-    { id: "delta", ad: "Tyrenna Delta (sıfır)", fiyat: 14500, gider: 120, itibar: 7, sure: 8, satir: 20 },
+    { id: "ova1300", ad: "Ova 1300 (ikinci el)", fiyat: 3800, gider: 60, itibar: 2, sure: 10, renk: "gri" },
+    { id: "brio", ad: "Ferrano Brio (ikinci el)", fiyat: 6900, gider: 85, itibar: 4, sure: 10, renk: "kirmizi" },
+    { id: "delta", ad: "Tyrenna Delta (sıfır)", fiyat: 14500, gider: 120, itibar: 7, sure: 8, renk: "mavi" },
   ];
   // Mobilya: evde görünür, uyurken toparlanmayı artırır
   const MOBILYA = [
@@ -50,8 +50,8 @@ const EKONOMI = (() => {
     const a = S.hayat.araba && ARABALAR.find((x) => x.id === S.hayat.araba);
     const e = EVLER[S.ev.id];
     if (!a || !e || e.bolge !== bolgeId) return [];
-    if (!a.satir) return [{ tip: "karo", x: e.kapi.x + 1, y: e.kapi.y - 1, karolar: [[14, 24]] }];
-    return [{ tip: "araba", x: e.kapi.x + 2, y: e.kapi.y - 1, satir: a.satir, sola: false }];
+    if (!a.renk) return [{ tip: "karo", sayfa: "sehir", x: e.kapi.x + 1, y: e.kapi.y - 1, karolar: [[14, 24]] }];
+    return [{ tip: "araba", x: e.kapi.x + 2, y: e.kapi.y - 1, renk: a.renk }];
   }
 
   // Uykudaki toparlanma: evin konforu ve mobilya

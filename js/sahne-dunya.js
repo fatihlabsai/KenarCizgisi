@@ -23,9 +23,14 @@ const SAHNE_DUNYA = (() => {
     oyuncu = { x: k.x * T + 8, y: k.y * T + 8, img: sec.oyuncuResim, ayna: false, kosu: false, yol: [], hedef: null };
     insanlar = (sec.insanlar || []).map((p) => ({ ...p, x: p.x * T + 8, y: p.y * T + 8, yol: [], bekle: Math.random() * 2, ayna: Math.random() < 0.5, kosu: false }));
     arabalar = [];
+    const renk = () => TRAFIK_RENK[Math.floor(Math.random() * TRAFIK_RENK.length)];
+    // Üst şerit sola, alt şerit sağa. Aynı şeritteki arabalar aynı hızda gider, birbirinin içinden geçmez.
     for (const y of b.yollar) {
-      arabalar.push({ x: Math.random() * b.gen * T, serit: 0, y, hiz: -26 - Math.random() * 10, satir: [16, 20, 24][Math.floor(Math.random() * 3)] });
-      arabalar.push({ x: Math.random() * b.gen * T, serit: 1, y, hiz: 30 + Math.random() * 10, satir: [16, 20, 24][Math.floor(Math.random() * 3)] });
+      const sol = -26 - Math.random() * 8, sag = 30 + Math.random() * 8, ara = b.gen * T / 2;
+      for (let i = 0; i < 2; i++) {
+        arabalar.push({ x: i * ara + Math.random() * 120, serit: 0, y, hiz: sol, renk: renk() });
+        arabalar.push({ x: i * ara + Math.random() * 120, serit: 1, y, hiz: sag, renk: renk() });
+      }
     }
     yagiyor = !!sec.yagmur && !b.ic;
     yagmur = yagiyor ? Array.from({ length: 90 }, () => ({ x: Math.random() * G, y: Math.random() * Y, h: 60 + Math.random() * 60 })) : [];
@@ -43,8 +48,7 @@ const SAHNE_DUNYA = (() => {
     ctx.imageSmoothingEnabled = false;
     for (let y = 0; y < b.yuk; y++) for (let x = 0; x < b.gen; x++) { const z = b.zemin[y][x]; KAYNAK.karo(ctx, z[0], z[1], z[2], x * T, y * T); }
     for (const yp of b.yapilar) {
-      if (yp.tip === "park") parkCiz(ctx, yp);
-      else if (yp.tip === "bina") binaCiz(ctx, yp);
+      if (yp.tip === "bina") binaCiz(ctx, yp);
       else if (yp.tip === "duvar") {
         for (let x = 0; x < b.gen; x++) { KAYNAK.karo(ctx, "sehir", 9, 5, x * T, 0); KAYNAK.karo(ctx, "sehir", 9, 9, x * T, T); }
       }
@@ -59,49 +63,113 @@ const SAHNE_DUNYA = (() => {
     return c;
   }
 
-  function parkCiz(ctx, p) {
-    for (let j = 0; j < p.yuk; j++) for (let i = 0; i < p.gen; i++) {
-      const s = 32 + (i === 0 ? 0 : i === p.gen - 1 ? 2 : 1), r = j === 0 ? 0 : j === p.yuk - 1 ? 2 : 1;
-      KAYNAK.karo(ctx, "sehir", s, r, (p.x + i) * T, (p.y + j) * T);
+  // ---------- RPG Urban Pack parçaları ----------
+  const U = (ctx, s, r, x, y, ayna) => KAYNAK.karo(ctx, "urban", s, r, x, y, ayna);
+  // Cephe: sol kenar sütunu ve satır başlangıcı. Satırlar: 0 saçak, 1 kat silmesi, 2 düz duvar, 3 zemin kat.
+  const CEPHE = { kirmizi: { s: 17, r: 0 }, turuncu: { s: 17, r: 4 }, kirmiziSade: { s: 20, r: 0 }, turuncuSade: { s: 20, r: 4 } };
+  // Pencereler: [bej çerçeve (kırmızı tuğla), gri çerçeve (turuncu tuğla)]
+  const PENCERE = {
+    kare: [[13, 13], [13, 16]], kemer: [[12, 12], [12, 15]], sivri: [[13, 12], [13, 15]],
+    kucuk: [[12, 13], [12, 16]], genis: [[12, 14], [12, 17]], dar: [[11, 12], [11, 15]],
+  };
+  const KAPI = { ahsap: [13, 10], cift: [14, 10], cam: [15, 10], dukkan: [14, 9], metal: [15, 12] };
+  // Tente renkleri: paketteki yeşil tentenin tonu kaydırılır
+  const TENTE = { yesil: "none", kirmizi: "hue-rotate(205deg) saturate(1.3)", turuncu: "hue-rotate(235deg) saturate(1.4) brightness(1.1)" };
+  // Araba renkleri: taksi ve kırmızı paketten, diğerleri kırmızının tonu kaydırılarak
+  const ARABA = {
+    taksi: { kaynak: "taksi", filtre: "none" }, kirmizi: { kaynak: "kirmizi", filtre: "none" },
+    mavi: { kaynak: "kirmizi", filtre: "hue-rotate(215deg) saturate(0.8)" }, yesil: { kaynak: "kirmizi", filtre: "hue-rotate(120deg) saturate(0.6) brightness(0.9)" },
+    beyaz: { kaynak: "kirmizi", filtre: "grayscale(1) brightness(1.55)" }, gri: { kaynak: "kirmizi", filtre: "grayscale(1) brightness(1.05)" },
+    siyah: { kaynak: "kirmizi", filtre: "grayscale(1) brightness(0.6)" },
+  };
+  const TRAFIK_RENK = ["taksi", "taksi", "kirmizi", "mavi", "beyaz", "gri", "siyah", "yesil"];
+  // Önden görünüş (park etmiş, 2×2) ve yukarıdan görünüş (yolda giden, 1×2; 90° döndürülür)
+  const ARABA_KARO = { taksi: { on: [15, 14], ust: [17, 14] }, kirmizi: { on: [15, 16], ust: [17, 16] } };
+  const resimler = new Map();
+  function filtreli(anahtar, gen, yuk, cizFn) {
+    if (!resimler.has(anahtar)) {
+      const c = document.createElement("canvas"); c.width = gen; c.height = yuk;
+      const x = c.getContext("2d"); x.imageSmoothingEnabled = false; cizFn(x);
+      resimler.set(anahtar, c);
     }
+    return resimler.get(anahtar);
+  }
+  // Ton kaydırılmış tek bir karo ya da karo grubu
+  function boyali(s, r, gen, yuk, filtre) {
+    return filtreli(`k${s},${r},${gen},${yuk},${filtre}`, gen * T, yuk * T, (x) => {
+      const ara = document.createElement("canvas"); ara.width = gen * T; ara.height = yuk * T;
+      const ac = ara.getContext("2d");
+      for (let j = 0; j < yuk; j++) for (let i = 0; i < gen; i++) U(ac, s + i, r + j, i * T, j * T);
+      x.filter = filtre; x.drawImage(ara, 0, 0); x.filter = "none";
+    });
+  }
+  // yon: "on" park etmiş, "sag" / "sol" yolda giden
+  function arabaResmi(renk, yon) {
+    const a = ARABA[renk] || ARABA.kirmizi, k = ARABA_KARO[a.kaynak];
+    if (yon === "on") return boyali(k.on[0], k.on[1], 2, 2, a.filtre);
+    const dik = boyali(k.ust[0], k.ust[1], 1, 2, a.filtre); // burnu aşağı bakıyor
+    return filtreli(`a${renk},${yon}`, 2 * T, T, (x) => {
+      if (yon === "sag") { x.translate(0, T); x.rotate(-Math.PI / 2); }
+      else { x.translate(2 * T, 0); x.rotate(Math.PI / 2); }
+      x.drawImage(dik, 0, 0);
+    });
   }
 
   function binaCiz(ctx, bn) {
-    const { x, y, gen, cati, kat, m } = bn;
-    for (let j = 0; j < cati; j++) for (let i = 0; i < gen; i++) {
-      const s = m.cati + (i === 0 ? 0 : i === gen - 1 ? 3 : 1 + (i % 2));
-      const r = j === 0 ? 0 : j === cati - 1 ? 3 : 1 + (j % 2);
-      KAYNAK.karo(ctx, "sehir", s, r, (x + i) * T, (y + j) * T);
+    const { x, y, gen, cati, satirlar } = bn;
+    const n = satirlar.length, cy = y + cati, zy = cy + n - 1;
+    const k = (s, r, px, py) => U(ctx, s, r, px * T, py * T);
+    // Düz çatı (kenarlı)
+    const [c0, r0] = bn.catiTur === "bej" ? [0, 3] : [8, 3];
+    const blok = (bs, br, bx, by, w, h) => { for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) k(bs + (i === 0 ? 0 : i === w - 1 ? 2 : 1), br + (j === 0 ? 0 : j === h - 1 ? 2 : 1), bx + i, by + j); };
+    blok(c0, r0, x, y, gen, cati);
+    // Stadyum: tribünlerin ortasında çim saha
+    if (bn.catiTur === "saha") blok(0, 0, x + 1, y + 1, gen - 2, cati - 2);
+    else if (gen >= 6 && cati >= 3) U(ctx, 9, 12, (x + 1 + (x * 3) % (gen - 3)) * T, (y + 1) * T - 4); // çatıda klima
+    // Cephe
+    const c = CEPHE[bn.tur];
+    for (let j = 0; j < n; j++) for (let i = 0; i < gen; i++) {
+      if (bn.kolon && (i === 0 || i === gen - 1)) { k(16, c.r + (j === 0 ? 0 : j === n - 1 ? 3 : 1 + (j % 2)), x + i, cy + j); continue; }
+      const a = bn.kolon ? 1 : 0;
+      k(c.s + (i === a ? 0 : i === gen - 1 - a ? 2 : 1), c.r + satirlar[j], x + i, cy + j);
     }
-    const cy = y + cati;
-    for (let j = 0; j < kat; j++) for (let i = 0; i < gen; i++) {
-      const s = m.duvar + (i === 0 ? 0 : i === gen - 1 ? 3 : 2);
-      const r = j === 0 ? 4 : j === kat - 1 ? 9 : 5;
-      KAYNAK.karo(ctx, "sehir", s, r, (x + i) * T, (cy + j) * T);
-    }
+    // Pencereler: gece yanacak olanlar kaydedilir
     bn.pencereler = [];
-    const pen = bn.pencere === "cam" ? [25, 19] : bn.pencere === "kule" ? [26, 16] : [25, 16];
+    const gri = bn.tur.startsWith("turuncu") ? 1 : 0;
+    const pen = (s, r, px, py) => { k(s, r, px, py); bn.pencereler.push({ x: px * T + 8, y: py * T + 8 }); };
+    const sutunlar = [];
+    if (gen <= 2) for (let i = 0; i < gen; i++) sutunlar.push(i);
+    else for (let i = 1; i < gen - 1; i++) if (gen <= 6 || Math.min(i, gen - 1 - i) % 2 === 1) sutunlar.push(i);
+    const kapiI = bn.kapi ? bn.kapi.x - x : -1;
     if (bn.pencere !== "yok") {
-      const ustKat = bn.pencere === "kule" ? 1 : kat - 2;
-      for (let j = 0; j < ustKat; j++) for (let i = 1; i < gen - 1; i += bn.pencere === "kule" ? 1 : 2) {
-        KAYNAK.karo(ctx, "sehir", pen[0], pen[1], (x + i) * T, (cy + j) * T + 2);
-        bn.pencereler.push({ x: (x + i) * T + 8, y: (cy + j) * T + 9 });
+      const [ps, pr] = PENCERE[bn.pencere][gri], [ds, dr] = PENCERE.dar[gri];
+      for (let j = 0; j < n - 1; j++) {
+        if (satirlar[j] === 1) continue; // silme satırında pencere yok
+        for (const i of sutunlar) if (!(bn.kolon && (i === 0 || i === gen - 1))) pen(ps, pr, x + i, cy + j);
+        if (bn.kolon) { pen(ds, dr, x, cy + j); pen(ds, dr, x + gen - 1, cy + j); }
       }
-      // Zemin katta kapının iki yanında vitrin
-      for (let i = 1; i < gen - 1; i++) {
-        if (bn.kapi && Math.abs(x + i - bn.kapi.x) < 1) continue;
-        if (i % 2 === 0 && bn.pencere !== "kule") { KAYNAK.karo(ctx, "sehir", pen[0], pen[1], (x + i) * T, (cy + kat - 2) * T + 4); bn.pencereler.push({ x: (x + i) * T + 8, y: (cy + kat - 2) * T + 11 }); }
-      }
+    }
+    // Zemin kat: dükkânlarda vitrin camı, evlerde pencere
+    if (bn.vitrin) {
+      const bas = bn.kolon ? 2 : 1, son = gen - (bn.kolon ? 3 : 2);
+      let p = [];
+      const bitir = () => { p.forEach((i, t) => pen(p.length === 1 ? 9 : t === 0 ? 8 : t === p.length - 1 ? 10 : 9, 14, x + i, zy)); p = []; };
+      for (let i = bas; i <= son; i++) { if (i === kapiI) bitir(); else p.push(i); }
+      bitir();
+    } else if (bn.pencere !== "yok" && n > 2) {
+      const tur = bn.pencere === "kemer" || bn.pencere === "sivri" ? "kare" : bn.pencere;
+      const [ps, pr] = PENCERE[tur][gri];
+      for (const i of sutunlar) if (Math.abs(i - kapiI) > 0 && !(bn.kolon && (i === 0 || i === gen - 1))) pen(ps, pr, x + i, zy);
     }
     if (bn.tente) {
-      const bas = bn.tente === "yesil" ? 23 : 27;
-      for (let i = 0; i < gen; i++) KAYNAK.karo(ctx, "sehir", bas + (i % 4), 9, (x + i) * T, (cy + kat - 3) * T);
+      const t = boyali(4, 12, 3, 1, TENTE[bn.tente] || "none");
+      const bas = bn.kolon ? 1 : 0, son = gen - 1 - bas;
+      for (let i = bas; i <= son; i++) {
+        const parca = i === bas ? 0 : i === son ? 2 : 1;
+        ctx.drawImage(t, parca * T, 0, T, T, (x + i) * T, (zy - 1) * T + 6, T, T);
+      }
     }
-    if (bn.kapi) {
-      const [s1, r1] = bn.kapi.tur === "cam" ? [23, 21] : [20, 26];
-      KAYNAK.karo(ctx, "sehir", s1, r1, bn.kapi.x * T, (cy + kat - 2) * T);
-      KAYNAK.karo(ctx, "sehir", s1, r1 + 1, bn.kapi.x * T, (cy + kat - 1) * T);
-    }
+    if (bn.kapi) { const [ks, kr] = KAPI[bn.kapi.tur] || KAPI.ahsap; k(ks, kr, bn.kapi.x, zy); }
   }
 
   // ---------- Hareket ----------
@@ -171,6 +239,7 @@ const SAHNE_DUNYA = (() => {
     const d = Math.hypot(dx, dy), adim = Math.min(d, hiz * dt);
     p.x += (dx / d) * adim; p.y += (dy / d) * adim; p.kosu = true;
     if (Math.abs(dx) > 0.3) p.ayna = dx > 0;
+    p.yon = Math.abs(dx) >= Math.abs(dy) ? "yan" : dy > 0 ? "asagi" : "yukari";
     return true;
   }
 
@@ -196,7 +265,7 @@ const SAHNE_DUNYA = (() => {
     if (!e || kilit) return;
     if (e.tur === "kapi" && cb.kapi) cb.kapi(e.veri);
     else if (e.tur === "cikis" && cb.cikis) cb.cikis({ ic: true, hedef: b.cikisHedef, nokta: b.cikisNokta });
-    else if (e.tur === "insan" && cb.insan) { const p = e.veri; p.yol = []; p.bekle = 6; p.ayna = oyuncu.x > p.x; cb.insan(p); }
+    else if (e.tur === "insan" && cb.insan) { const p = e.veri; p.yol = []; p.bekle = 6; p.ayna = oyuncu.x > p.x; p.yon = "yan"; cb.insan(p); }
     else if (e.tur === "etkilesim" && cb.etkilesim) cb.etkilesim(e.veri);
   }
 
@@ -251,10 +320,11 @@ const SAHNE_DUNYA = (() => {
       if (yolTakip(p, p.hiz || 30, dt) === "vardi") p.bekle = 2 + Math.random() * 6;
     }
     // Arabalar
+    const tur = b.gen * T + 110;
     for (const a of arabalar) {
       a.x += a.hiz * dt;
-      if (a.hiz > 0 && a.x > b.gen * T + 30) a.x = -80 - Math.random() * 200;
-      if (a.hiz < 0 && a.x < -80) a.x = b.gen * T + 30 + Math.random() * 200;
+      if (a.hiz > 0 && a.x > b.gen * T + 30) a.x -= tur;
+      if (a.hiz < 0 && a.x < -80) a.x += tur;
     }
     for (const r of yagmur) { r.y += r.h * dt * 3; r.x -= r.h * dt * 0.5; if (r.y > Y) { r.y = -4; r.x = Math.random() * (G + 40); } }
     kameraGuncelle();
@@ -274,6 +344,14 @@ const SAHNE_DUNYA = (() => {
     const x = Math.round(p.x - kamera.x), y = Math.round(p.y - kamera.y);
     const zip = p.kosu ? Math.round(Math.abs(Math.sin(sure * 12 + p.x * 0.2)) * 1.5) : 0;
     ctx.fillStyle = "rgba(0,0,0,0.22)"; ctx.fillRect(x - 5, y + 7, 10, 2);
+    // Urban kasabalıları: dört yön, yürürken iki adım karesi. Sütun 23 sola, 24 öne, 25 arkaya bakar.
+    if (p.urban != null) {
+      const yon = p.yon || "asagi";
+      const s = yon === "yan" ? 23 : yon === "yukari" ? 25 : 24;
+      const kare = p.kosu ? 1 + (Math.floor(sure * 6 + p.urban) % 2) : 0;
+      U(ctx, s, p.urban * 3 + kare, x - 8, y - 8, yon === "yan" && p.ayna);
+      return;
+    }
     if (p.ayna) { ctx.save(); ctx.translate(x + 8, 0); ctx.scale(-1, 1); ctx.drawImage(p.img, 0, y - 8 - zip); ctx.restore(); }
     else ctx.drawImage(p.img, x - 8, y - 8 - zip);
   }
@@ -298,14 +376,14 @@ const SAHNE_DUNYA = (() => {
     const liste = [];
     for (const n of b.nesneler) {
       if (n.tip === "esya" && !b.engel[n.y][n.x]) continue;
-      const tabanY = n.tip === "agac" ? (n.y + 2) * T : n.tip === "lamba" ? (n.y + 3) * T : n.tip === "dikey" ? (n.y + n.yuk) * T : n.tip === "araba" ? (n.y + 2) * T : (n.y + 1) * T;
-      liste.push({ y: tabanY, ciz: () => nesneCiz(ctx, n, ox, oy) });
+      liste.push({ y: tabanY(n), ciz: () => nesneCiz(ctx, n, ox, oy) });
     }
+    // Yoldaki arabalar: üst şerit yolun ilk satırında, alt şerit üçüncü satırında
     for (const a of arabalar) {
-      const ust = a.serit === 0 ? a.y * T - 6 : (a.y + 1) * T;
-      liste.push({ y: ust + 30, ciz: () => { const s = a.hiz > 0 ? 34 : 31; for (let j = 0; j < 2; j++) for (let i = 0; i < 3; i++) KAYNAK.karo(ctx, "sehir", s + i, a.satir + j, a.x + i * T + ox, ust + j * T + oy); } });
+      const ust = (a.serit === 0 ? a.y : a.y + 2) * T;
+      liste.push({ y: ust + T, ciz: () => ctx.drawImage(arabaResmi(a.renk, a.hiz > 0 ? "sag" : "sol"), Math.round(a.x + ox), ust + oy) });
     }
-    for (const n of ekler) liste.push({ y: (n.y + (n.tip === "araba" ? 2 : 1)) * T - (n.zemin ? 100 : 0), ciz: () => nesneCiz(ctx, n, ox, oy) });
+    for (const n of ekler) liste.push({ y: tabanY(n) - (n.zemin ? 100 : 0), ciz: () => nesneCiz(ctx, n, ox, oy) });
     for (const p of insanlar) liste.push({ y: p.y + 8, ciz: () => kisiCiz(ctx, p) });
     liste.push({ y: oyuncu.y + 8, ciz: () => kisiCiz(ctx, oyuncu) });
     liste.sort((a, c) => a.y - c.y).forEach((x) => x.ciz());
@@ -330,13 +408,23 @@ const SAHNE_DUNYA = (() => {
     }
   }
 
+  // Ağaçlar: [yaz, sonbahar]; iki karoluklarda üst ve alt karo
+  const AGAC = [
+    [[16, 8, 16, 9], [16, 11, 16, 12]], [[17, 8, 17, 9], [17, 11, 17, 12]],
+    [[16, 8, 16, 10], [16, 11, 16, 13]], [[17, 8, 17, 10], [17, 11, 17, 13]],
+    [[22, 8], [22, 11]], [[22, 9], [22, 12]], [[22, 10], [22, 13]],
+  ];
+  const sonbahar = () => { const a = ayFn(); return a === 10 || a === 11; };
+  const tabanY = (n) => (n.y + ({ agac: n.tur >= 4 ? 1 : 2, koru: 3, lamba: 2, araba: 2 }[n.tip] || (n.tip === "dikey" ? n.yuk : 1))) * T;
+
   function nesneCiz(ctx, n, ox, oy) {
     const x = n.x * T + ox, y = n.y * T + oy;
-    if (n.tip === "agac") { const s = 31 + (n.tur % 3) * 2; KAYNAK.karo(ctx, "sehir", s, 11, x, y); KAYNAK.karo(ctx, "sehir", s, 12, x, y + T); }
-    else if (n.tip === "lamba") { KAYNAK.karo(ctx, "sehir", 1, 16, x, y); KAYNAK.karo(ctx, "sehir", 1, 17, x, y + T); KAYNAK.karo(ctx, "sehir", 1, 18, x, y + 2 * T); }
-    else if (n.tip === "dikey") { for (let j = 0; j < n.yuk; j++) KAYNAK.karo(ctx, "sehir", n.s, n.r + j, x, y + j * T); }
-    else if (n.tip === "karo") n.karolar.forEach(([s, r], i) => KAYNAK.karo(ctx, "sehir", s, r, x + i * T, y));
-    else if (n.tip === "araba") { const s = n.sola ? 31 : 34; for (let j = 0; j < 2; j++) for (let i = 0; i < 3; i++) KAYNAK.karo(ctx, "sehir", s + i, n.satir + j, x + i * T, y + j * T); }
+    if (n.tip === "agac") { const a = AGAC[n.tur % AGAC.length][sonbahar() ? 1 : 0]; U(ctx, a[0], a[1], x, y); if (a[2]) U(ctx, a[2], a[3], x, y + T); }
+    else if (n.tip === "koru") { const r = sonbahar() ? 11 : 8; for (let j = 0; j < 3; j++) for (let i = 0; i < 3; i++) U(ctx, 18 + i, r + j, x + i * T, y + j * T); }
+    else if (n.tip === "lamba") { const s = n.tur === "park" ? 7 : 3; U(ctx, s, 6, x, y); U(ctx, s, 7, x, y + T); }
+    else if (n.tip === "dikey") { for (let j = 0; j < n.yuk; j++) U(ctx, n.s, n.r + j, x, y + j * T); }
+    else if (n.tip === "karo") n.karolar.forEach(([s, r], i) => KAYNAK.karo(ctx, n.sayfa || "urban", s, r, x + i * T, y));
+    else if (n.tip === "araba") ctx.drawImage(arabaResmi(n.renk, "on"), Math.round(x), Math.round(y));
     else if (n.tip === "esya") KAYNAK.karo(ctx, "ic", n.s, n.r, x, y, n.ayna);
   }
 
@@ -346,7 +434,8 @@ const SAHNE_DUNYA = (() => {
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
     ctx.font = `${Math.round(6 * o)}px "Jersey 10", sans-serif`;
     for (const bn of b.yapilar) if (bn.tabela) {
-      const x = (bn.x + bn.gen / 2) * T - kamera.x, y = (bn.y + bn.cati + 0.45) * T - kamera.y;
+      // Tabela zemin katın üstündeki silmede durur
+      const x = (bn.x + bn.gen / 2) * T - kamera.x, y = (bn.y + bn.cati + bn.satirlar.length - 2 + 0.5) * T - kamera.y;
       const w = ctx.measureText(bn.tabela).width / o + 8;
       ctx.fillStyle = "#22201c"; ctx.fillRect((x - w / 2) * o, (y - 5) * o, w * o, 10 * o);
       ctx.fillStyle = "#efe6d2"; ctx.fillText(bn.tabela, x * o, y * o + o * 0.5);
@@ -377,8 +466,27 @@ const SAHNE_DUNYA = (() => {
     });
   }
 
+  // Bir bölgenin insansız tam resmi: zemin, binalar ve sokak eşyaları (gündüz sahnesi ve harita için)
+  function tamResim(bolgeId, ay) {
+    const eski = ayFn;
+    if (ay) ayFn = () => ay; // ağaçların mevsimi
+    try { return tamCiz(bolgeId); } finally { ayFn = eski; }
+  }
+  function tamCiz(bolgeId) {
+    const bb = SEHIR.bolge(bolgeId);
+    const zemin = onbellek.get(bolgeId) || onCizim(bb);
+    onbellek.set(bolgeId, zemin);
+    const c = document.createElement("canvas");
+    c.width = zemin.width; c.height = zemin.height;
+    const ctx = c.getContext("2d");
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(zemin, 0, 0);
+    bb.nesneler.filter((n) => !(n.tip === "esya" && !bb.engel[n.y][n.x])).sort((a, c) => tabanY(a) - tabanY(c)).forEach((n) => nesneCiz(ctx, n, 0, 0));
+    return c;
+  }
+
   const API = {
-    G, Y, kur, guncelle, ciz, ustCiz, fareBagla, etkiles, tikla,
+    G, Y, kur, guncelle, ciz, ustCiz, fareBagla, etkiles, tikla, tamResim, arabaResmi,
     kilitle: (v) => { kilit = v; if (v) tuslar.clear(); },
     bolge: () => b, oyuncuKonum: () => oyuncu && { x: oyuncu.x / T - 0.5, y: oyuncu.y / T - 0.5 },
     insanlar: () => insanlar, yakin: () => yakin,

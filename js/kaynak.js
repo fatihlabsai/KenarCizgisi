@@ -18,6 +18,7 @@ const KAYNAK = (() => {
       yukle("sehir", "assets/kenney/sehir.png"),
       yukle("ic", "assets/kenney/ic-mekan.png"),
       yukle("kar", "assets/kenney/karakter.png"),
+      yukle("urban", "assets/kenney/urban.png"),
     ]);
   }
 

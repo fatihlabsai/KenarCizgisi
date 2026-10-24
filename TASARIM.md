@@ -315,7 +315,7 @@ Bu yüzden Aşama 3'ün merkezinde **yürünebilir, yaşayan bir şehir** var. E
 | # | Geri bildirim | Ne zaman | Durum |
 |---|---|---|---|
 | 1 | "Yaşayan dünya hissi yok, yürüyemiyoruz." (v0.3.0) | Aşama 3 | ✅ yapıldı (v0.4.0) |
-| 2 | "Ev vb. yapıların görüntüleri çok kötü, iyi bir hava vermiyor." (v0.4.0) | Aşama 4'ün ilk işi | bekliyor |
+| 2 | "Ev vb. yapıların görüntüleri çok kötü, iyi bir hava vermiyor." (v0.4.0) | Aşama 4'ün ilk işi | ✅ yapıldı (RPG Urban Pack seçildi) |
 | 3 | "M'ye basınca açılan bir harita olsun." (v0.4.0) | Aşama 4'ün ilk işi | bekliyor |
 
 ## 9.5 Aşama 4 planı (💡 onay bekliyor)
@@ -327,6 +327,16 @@ Bu yüzden Aşama 3'ün merkezinde **yürünebilir, yaşayan bir şehir** var. E
 - Kenney'nin aynı tarzda ve yine ücretsiz (CC0) başka şehir paketleri var. Bunları indirip aynı sokağı her biriyle kuracağım, yan yana bir karşılaştırma ekranında göstereceğim. Seçim senin olacak.
 - Kural aynı kalıyor: tek bir sanatçının tutarlı tarzı, yapay zekâ görseli yok.
 - Yeni paket karakterlere de uyuyorsa, yürürken adım atan karakterler de gelebilir. Kesin değil, paketlere bakınca söyleyeceğim.
+- **Sonuç:** Dört seçenek karşılaştırıldı, kullanıcı **RPG Urban Pack**'i (Kenney, CC0) seçti. Kalvar'ın dört bölgesi bu paketle baştan kuruldu:
+  - Tuğla cepheli binalar, düz çatılar, kat silmeleri, vitrinler, tenteler, tabelalar.
+  - Asfalt yol, yaya geçitleri, kaldırım, park, meydan havuzu, gölet, korular.
+  - Stadyumun çatısından saha görünüyor.
+  - Ağaçlar ekim ve kasımda turuncuya dönüyor.
+  - Kasabalılar dört yöne adım atarak yürüyor. Menajer, oyuncular, tanıdıklar ve taraftarlar bizim karakter sistemimizle kalıyor.
+  - Arabalar şeridinde doğru yöne gidiyor.
+  - Gündüz sokak sahnesi de aynı Lale Sokak görüntüsünü kullanıyor.
+  - İç mekânlar değişmedi (Roguelike Indoors).
+  - 💡 Ova kenarındaki tarlaların yerini meyve bahçesi, gölet ve korular aldı, çünkü yeni pakette tarla yok.
 
 **M haritası (#3)**
 - M tuşuna basınca, ya da dünyadaki "Harita" düğmesine tıklayınca, kâğıt tarzında bir harita açılır.

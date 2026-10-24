@@ -1,14 +1,13 @@
 // Kalvar şehrinin haritası: bölgeler (sokaklar) ve iç mekânlar. Sadece veri; çizimi sahne-dunya.js yapar.
-// Koordinatlar karo cinsinden (16 piksel). Binaların cephesi güneye bakar, kapıya alttaki kaldırımdan girilir.
+// Koordinatlar karo cinsinden (16 piksel). Sokaklar RPG Urban Pack ("urban" sayfası), iç mekânlar Roguelike Indoors ile çizilir.
+// Binaların cephesi güneye bakar, kapıya alttaki kaldırımdan girilir.
 const SEHIR = (() => {
   const Z = {
-    cim: ["sehir", 0, 24], kaldirim: ["sehir", 1, 20], tas: ["sehir", 3, 19], mavitas: ["sehir", 6, 19],
-    asfalt: ["sehir", 11, 19], serit: ["sehir", 9, 19], toprak: ["sehir", 4, 24], cakil: ["sehir", 2, 24], parke: ["sehir", 8, 24],
-    yolUst: ["sehir", 11, 25], yolOrta: ["sehir", 11, 26], yolAlt: ["sehir", 11, 27],
-    tarla: ["sehir", 32, 5], tarla2: ["sehir", 35, 5], ahsap: ["sehir", 3, 19],
+    tas: ["sehir", 3, 19], mavitas: ["sehir", 6, 19], // iç mekân zeminleri
+    cim: ["urban", 1, 1], kaldirim: ["urban", 9, 1], bej: ["urban", 1, 4], asfalt: ["urban", 9, 16],
   };
-  // Bina türleri: çatı sütunu ve cephe sütunu (sehir sayfasında)
-  const MALZEME = { tugla: { cati: 0, duvar: 0 }, gri: { cati: 8, duvar: 4 }, bej: { cati: 24, duvar: 8 }, beyaz: { cati: 16, duvar: 4 } };
+  // Kenarlı alanların (3×3) sol üst köşesi: çim, bej taş, gri kaldırım, gri çatı, su
+  const BLOK = { cim: [0, 0], bej: [0, 3], kaldirim: [8, 0], griCati: [8, 3], su: [8, 6] };
 
   function yeniBolge(id, ad, gen, yuk, zemin = "cim") {
     return {
@@ -21,49 +20,92 @@ const SEHIR = (() => {
   const doldur = (b, x, y, w, h, z) => { for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) if (b.zemin[j] && i >= 0 && i < b.gen) b.zemin[j][i] = Z[z] || z; };
   const engelle = (b, x, y, w = 1, h = 1) => { for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) if (b.engel[j] && i >= 0 && i < b.gen) b.engel[j][i] = true; };
 
-  // Üç karoluk yol: ortası şeritli. Arabalar üst şeritte sola, alt şeritte sağa gider.
-  function yol(b, y) {
-    doldur(b, 0, y, b.gen, 3, "asfalt");
-    for (let i = 0; i < b.gen; i++) b.zemin[y + 1][i] = Z.serit;
+  // Kenarlı alan. Bölge boyunca uzanan kaldırımda yan kenarlar kapatılır.
+  function alan(b, x, y, w, h, blok, { ust = true, alt = true, sol = true, sag = true } = {}) {
+    const [c0, r0] = BLOK[blok];
+    for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) {
+      const c = c0 + (sol && i === 0 ? 0 : sag && i === w - 1 ? 2 : 1);
+      const r = r0 + (ust && j === 0 ? 0 : alt && j === h - 1 ? 2 : 1);
+      if (b.zemin[y + j] && x + i >= 0 && x + i < b.gen) b.zemin[y + j][x + i] = ["urban", c, r];
+    }
+    if (blok === "su") engelle(b, x, y, w, h);
+  }
+  const kaldirim = (b, y, h, ust, alt) => alan(b, 0, y, b.gen, h, "kaldirim", { ust, alt, sol: false, sag: false });
+
+  // Üç karoluk yol: üst şeritte arabalar sola, alt şeritte sağa gider, ortada kesik çizgi. Geçitlerde yaya çizgileri.
+  function yol(b, y, gecitler = []) {
+    for (let i = 0; i < b.gen; i++) {
+      b.zemin[y][i] = (i * 7 + y) % 5 === 0 ? ["urban", 9, 17] : Z.asfalt;
+      b.zemin[y + 1][i] = ["urban", 1, 16];
+      b.zemin[y + 2][i] = (i * 3 + y) % 7 === 0 ? ["urban", 9, 17] : Z.asfalt;
+    }
+    for (const x of gecitler) for (let j = 0; j < 3; j++) b.zemin[y + j][x] = ["urban", 0, 15 + j];
     b.yollar.push(y);
   }
 
-  // Bina: kat = cephe satırı sayısı (en az 3). Kapı cephenin alt iki satırında.
-  function bina(b, { x, y, gen, cati = 2, kat = 4, tur = "tugla", kapi, pencere = "ahsap", tente, tabela, kapiTur = "ahsap" }) {
-    const m = MALZEME[tur];
-    b.yapilar.push({ tip: "bina", x, y, gen, cati, kat, m, pencere, tente, tabela, kapi: kapi && { ...kapi, tur: kapiTur } });
-    engelle(b, x, y, gen, cati + kat);
-    if (kapi) b.kapilar.push({ x: kapi.x, y: y + cati + kat, ad: kapi.ad, hedef: kapi.hedef, bina: true });
+  // Bina. cati: çatı satırı (en az 2). kat: kat sayısı; her kat bir satır, zemin katın üstünde bir silme var.
+  // taban: kapının olduğu kaldırım satırı, binanın alt satırı bunun bir üstü.
+  // tur: kirmizi / turuncu (çerçeveli tuğla), kirmiziSade / turuncuSade. kolon: köşelerde sütun.
+  function bina(b, { x, taban = 9, gen, cati = 2, kat = 2, tur = "kirmizi", catiTur, kapi, pencere = "kare", kapiTur = "ahsap", tente, tabela, kolon = false, vitrin = false }) {
+    const satirlar = [0, ...Array(Math.max(0, kat - 2)).fill(2), 1, 3];
+    const y = taban - cati - satirlar.length;
+    b.yapilar.push({
+      tip: "bina", x, y, gen, cati, satirlar, tur, catiTur: catiTur || (tur.startsWith("kirmizi") ? "bej" : "griCati"),
+      pencere, tente, tabela, kolon, vitrin, kapi: kapi && { ...kapi, tur: kapiTur },
+    });
+    engelle(b, x, y, gen, cati + satirlar.length);
+    if (kapi) b.kapilar.push({ x: kapi.x, y: taban, ad: kapi.ad, hedef: kapi.hedef, bina: true });
   }
 
-  // Ağaç iki karo boyunda; sadece gövdesi (alt karo) engeldir
-  function agac(b, x, y, tur = 0) { b.nesneler.push({ tip: "agac", x, y, tur }); engelle(b, x, y + 1); }
-  function lamba(b, x, y) { b.nesneler.push({ tip: "lamba", x, y }); engelle(b, x, y + 2); b.isiklar.push({ x: x * 16 + 12, y: y * 16 + 4, r: 34 }); }
-  function bank(b, x, y) { b.nesneler.push({ tip: "karo", x, y, karolar: [[17, 15], [18, 15]], gen: 2 }); engelle(b, x, y, 2); b.noktalar.bank ||= []; b.noktalar.bank.push({ x: x + 1, y: y + 1 }); }
-  function karo(b, x, y, s, r, engel = true) { b.nesneler.push({ tip: "karo", x, y, karolar: [[s, r]], gen: 1 }); if (engel) engelle(b, x, y); }
+  // Ağaç türleri: 0 uzun, 1 kısa, 2 saksıda uzun, 3 saksıda kısa (iki karo); 4 çalı, 5 fidan, 6 yuvarlak ağaççık (tek karo).
+  // İki karoluk ağaçta sadece gövde engeldir.
+  function agac(b, x, y, tur = 0) { b.nesneler.push({ tip: "agac", x, y, tur }); engelle(b, x, tur >= 4 ? y : y + 1); }
+  // Üç ağaçlık koru (3×3)
+  function koru(b, x, y) { b.nesneler.push({ tip: "koru", x, y }); engelle(b, x, y + 1, 3, 2); }
+  // Lamba iki karo boyunda, ayağı engel. "sokak": çift kollu, "park": yeşil fener
+  function lamba(b, x, y, tur = "sokak") { b.nesneler.push({ tip: "lamba", x, y, tur }); engelle(b, x, y + 1); b.isiklar.push({ x: x * 16 + 8, y: y * 16 + 3, r: 36 }); }
+  function bank(b, x, y, tur = "ahsap") { b.nesneler.push({ tip: "karo", x, y, karolar: [tur === "tas" ? [0, 10] : [7, 9]] }); engelle(b, x, y); }
+  function karo(b, x, y, s, r, engel = true) { b.nesneler.push({ tip: "karo", x, y, karolar: [[s, r]] }); if (engel) engelle(b, x, y); }
   function uzun(b, x, y, s, r, yuk, engel = true) { b.nesneler.push({ tip: "dikey", x, y, s, r, yuk }); if (engel) engelle(b, x, y + yuk - 1); }
-  function park(b, x, y, gen, yuk) { b.yapilar.push({ tip: "park", x, y, gen, yuk }); }
-  function cit(b, x, y, gen) { for (let i = 0; i < gen; i++) karo(b, x + i, y, 17, 18); }
-  function arabaPark(b, x, y, renkSatir, sola = false) { b.nesneler.push({ tip: "araba", x, y, satir: renkSatir, sola }); engelle(b, x, y + 1, 3, 1); }
+  // Çit: ahşap ya da tel
+  function cit(b, x, y, gen, tur = "ahsap") {
+    const r = tur === "tel" ? 13 : 14;
+    for (let i = 0; i < gen; i++) karo(b, x + i, y, i === 0 ? 4 : i === gen - 1 ? 6 : 5, r);
+  }
+  // Park etmiş araba: önden görünüş, 2×2 karo
+  function arabaPark(b, x, y, renk) { b.nesneler.push({ tip: "araba", x, y, renk }); engelle(b, x, y + 1, 2, 1); }
+  function parkYeri(b, x, y) { b.zemin[y][x] = ["urban", 5, 16]; b.zemin[y][x + 1] = ["urban", 6, 16]; b.zemin[y + 1][x] = ["urban", 5, 17]; b.zemin[y + 1][x + 1] = ["urban", 6, 17]; }
   function cikis(b, kenar, hedef, giris) { b.cikislar.push({ kenar, hedef, giris }); }
   const nokta = (b, ad, x, y) => { b.noktalar[ad] = { x, y }; };
+
+  // Ortak sokak düzeni: arkada bahçeler (0–8), kaldırım (9–10), yol (11–13), karşı kaldırım (14), alt alan (15–19)
+  function sokak(b, gecitler, altZemin) {
+    alan(b, 0, 0, b.gen, 9, "cim", { ust: false, sol: false, sag: false });
+    kaldirim(b, 9, 2, false, true); yol(b, 11, gecitler); kaldirim(b, 14, 1, true, false);
+    alan(b, 0, 15, b.gen, 5, altZemin, { alt: false, sol: false, sag: false });
+  }
 
   // ---------- Lale Sokak ----------
   function lale() {
     const b = yeniBolge("lale", "Lale Sokak", 44, 20);
-    doldur(b, 0, 9, 44, 2, "kaldirim"); yol(b, 11); doldur(b, 0, 14, 44, 1, "kaldirim");
-    for (let x = 1; x < 44; x += 5) agac(b, x, 0, x % 3);
-    bina(b, { x: 2, y: 2, gen: 7, kat: 5, tur: "tugla", kapi: { x: 5, ad: "Lale Sokak 4", hedef: "ev:daire" } });
-    bina(b, { x: 11, y: 3, gen: 6, kat: 4, tur: "bej", kapi: { x: 13, ad: "Kavaklı Apartmanı", hedef: "ev:kavakli" }, tabela: "Kavaklı Apt." });
-    bina(b, { x: 19, y: 4, gen: 5, kat: 3, tur: "gri", kapi: { x: 21, ad: "Petri'lerin evi", hedef: "komsu:petri" } });
-    bina(b, { x: 26, y: 3, gen: 6, kat: 4, tur: "tugla", kapi: { x: 28, ad: "Sorova'nın evi", hedef: "komsu:sorova" } });
-    bina(b, { x: 34, y: 2, gen: 8, kat: 5, tur: "bej" });
-    for (const x of [9, 17, 24, 33, 42]) lamba(b, x, 7);
-    park(b, 2, 15, 18, 5);
-    for (const [x, y, t] of [[3, 15, 0], [8, 16, 2], [14, 15, 1], [18, 16, 0], [24, 16, 2], [30, 15, 1], [38, 16, 0]]) agac(b, x, y, t);
-    bank(b, 5, 18); bank(b, 11, 18); karo(b, 16, 18, 16, 13); karo(b, 22, 15, 15, 14);
-    cit(b, 23, 18, 6); karo(b, 33, 15, 15, 13);
-    arabaPark(b, 35, 8, 20);
+    sokak(b, [20, 38], "cim");
+    alan(b, 0, 17, 44, 2, "bej", { sol: false, sag: false }); // parkın içinden geçen yol
+    for (const [x, t] of [[1, 0], [5, 1], [9, 0], [14, 1], [18, 0], [22, 1], [26, 0], [30, 1], [34, 0], [38, 1], [42, 0]]) agac(b, x, 0, t);
+    bina(b, { x: 2, gen: 7, cati: 3, kat: 3, tur: "kirmizi", kapi: { x: 5, ad: "Lale Sokak 4", hedef: "ev:daire" } });
+    bina(b, { x: 11, gen: 6, kat: 4, tur: "turuncu", pencere: "kemer", kapiTur: "cift", kapi: { x: 13, ad: "Kavaklı Apartmanı", hedef: "ev:kavakli" }, tabela: "Kavaklı Apt." });
+    bina(b, { x: 19, gen: 5, kat: 2, tur: "kirmiziSade", pencere: "kucuk", kapi: { x: 21, ad: "Petri'lerin evi", hedef: "komsu:petri" } });
+    bina(b, { x: 26, gen: 6, cati: 3, kat: 2, tur: "turuncuSade", kapi: { x: 28, ad: "Sorova'nın evi", hedef: "komsu:sorova" } });
+    bina(b, { x: 34, gen: 8, cati: 3, kat: 3, tur: "kirmizi", kolon: true, pencere: "kemer" });
+    // Binaların arasında ağaçlar, kaldırımda lambalar
+    for (const [x, t] of [[10, 1], [18, 6], [24, 1], [33, 4], [42, 1]]) agac(b, x, t >= 4 ? 7 : 6, t);
+    for (const x of [9, 17, 25, 32, 43]) lamba(b, x, 9);
+    karo(b, 15, 10, 8, 11); // posta kutusu
+    // Park
+    for (const [x, t] of [[3, 0], [8, 1], [14, 0], [18, 1], [24, 0], [33, 1], [38, 0], [41, 1]]) agac(b, x, 15, t);
+    for (const [x, t] of [[1, 4], [7, 4], [16, 6], [23, 4], [31, 6], [40, 4]]) agac(b, x, 19, t);
+    bank(b, 5, 16); bank(b, 11, 16); bank(b, 29, 16);
+    lamba(b, 21, 15, "park"); lamba(b, 35, 15, "park");
+    karo(b, 16, 16, 10, 9); // çöp kutusu
     nokta(b, "solGiris", 1, 10); nokta(b, "sagGiris", 42, 10);
     b.gezinti = [[3, 10], [12, 10], [22, 10], [33, 10], [41, 10], [6, 17], [14, 17], [20, 19], [28, 17], [36, 19]];
     cikis(b, "sol", "ova", "sagGiris"); cikis(b, "sag", "carsi", "solGiris");
@@ -72,47 +114,52 @@ const SEHIR = (() => {
 
   // ---------- Çarşı ----------
   function carsi() {
-    const b = yeniBolge("carsi", "Çarşı", 48, 20, "kaldirim");
-    doldur(b, 0, 0, 48, 2, "cim"); yol(b, 11); doldur(b, 0, 15, 48, 5, "tas");
-    for (let x = 0; x < 48; x += 4) agac(b, x, 0, (x / 4) % 3);
-    bina(b, { x: 1, y: 3, gen: 6, kat: 4, tur: "bej", kapi: { x: 3, ad: "Gözcü Kafe", hedef: "ic:kafe" }, tente: "yesil", kapiTur: "cam" });
-    bina(b, { x: 8, y: 3, gen: 6, kat: 4, tur: "tugla", kapi: { x: 10, ad: "Ovalı Lokantası", hedef: "ic:lokanta" }, tente: "turuncu" });
-    bina(b, { x: 15, y: 2, gen: 7, kat: 5, tur: "gri", kapi: { x: 18, ad: "Kalvar Bankası", hedef: "ic:banka" }, pencere: "cam", kapiTur: "cam", tabela: "BANKA" });
-    bina(b, { x: 23, y: 3, gen: 5, kat: 4, tur: "bej", kapi: { x: 25, ad: "Varga Emlak", hedef: "ic:emlak" }, tabela: "EMLAK" });
-    bina(b, { x: 29, y: 3, gen: 6, kat: 4, tur: "tugla", kapi: { x: 31, ad: "Petri Eşya", hedef: "ic:esya" }, tente: "turuncu" });
-    doldur(b, 36, 2, 12, 7, "parke");
-    bina(b, { x: 43, y: 3, gen: 4, kat: 3, tur: "beyaz", kapi: { x: 44, ad: "Kask Oto Galeri", hedef: "ic:galeri" }, pencere: "cam", kapiTur: "cam", tabela: "OTO" });
-    arabaPark(b, 36, 3, 16); arabaPark(b, 36, 6, 24); arabaPark(b, 40, 6, 20, true);
-    karo(b, 9, 9, 10, 18); karo(b, 12, 9, 11, 18); karo(b, 28, 9, 12, 18);
-    for (const x of [0, 7, 14, 22, 28, 35, 47]) lamba(b, x, 7);
-    // Meydan: heykel, banklar, pazar tezgâhları
-    karo(b, 22, 16, 35, 2); bank(b, 18, 17); bank(b, 25, 17);
-    for (const [x, t] of [[4, 0], [12, 2], [33, 1], [42, 0]]) agac(b, x, 16, t);
-    karo(b, 7, 16, 9, 18); karo(b, 8, 16, 10, 18); karo(b, 9, 16, 11, 18); karo(b, 36, 17, 12, 18); karo(b, 37, 17, 13, 18);
-    uzun(b, 45, 15, 9, 14, 2);
+    const b = yeniBolge("carsi", "Çarşı", 48, 20);
+    sokak(b, [12, 30], "bej");
+    for (const [x, t] of [[1, 1], [5, 0], [9, 1], [13, 0], [17, 1], [21, 0], [25, 1], [29, 0], [33, 1], [37, 0], [41, 1], [45, 0]]) agac(b, x, 0, t);
+    bina(b, { x: 1, gen: 6, kat: 3, tur: "turuncu", pencere: "kare", kapi: { x: 3, ad: "Gözcü Kafe", hedef: "ic:kafe" }, kapiTur: "dukkan", vitrin: true, tente: "yesil" });
+    bina(b, { x: 8, gen: 6, kat: 3, tur: "kirmizi", pencere: "kucuk", kapi: { x: 10, ad: "Ovalı Lokantası", hedef: "ic:lokanta" }, kapiTur: "cift", vitrin: true, tente: "kirmizi" });
+    bina(b, { x: 15, gen: 7, cati: 3, kat: 3, tur: "turuncu", kolon: true, pencere: "kemer", kapi: { x: 18, ad: "Kalvar Bankası", hedef: "ic:banka" }, kapiTur: "cam", tabela: "BANKA" });
+    bina(b, { x: 23, gen: 5, kat: 3, tur: "kirmiziSade", pencere: "sivri", kapi: { x: 25, ad: "Varga Emlak", hedef: "ic:emlak" }, kapiTur: "dukkan", vitrin: true, tabela: "EMLAK" });
+    bina(b, { x: 29, gen: 6, kat: 2, tur: "turuncuSade", kapi: { x: 31, ad: "Petri Eşya", hedef: "ic:esya" }, kapiTur: "cift", vitrin: true, tente: "turuncu" });
+    // Oto galerinin önünde park yeri
+    doldur(b, 36, 4, 7, 5, "asfalt"); alan(b, 36, 0, 7, 4, "cim", { ust: false, sol: false, sag: false });
+    for (const [x, renk] of [[36, "kirmizi"], [38, "beyaz"], [40, "mavi"]]) { parkYeri(b, x, 5); arabaPark(b, x, 5, renk); }
+    bina(b, { x: 43, gen: 4, kat: 2, tur: "turuncu", pencere: "genis", vitrin: true, kapi: { x: 44, ad: "Kask Oto Galeri", hedef: "ic:galeri" }, kapiTur: "cam", tabela: "OTO" });
+    for (const x of [0, 7, 14, 22, 28, 35, 47]) lamba(b, x, 9);
+    karo(b, 20, 10, 8, 11); karo(b, 27, 10, 8, 9); karo(b, 34, 10, 10, 9);
+    // Meydan: havuz, banklar, saksıda ağaçlar, pazar tezgâhları, otobüs durağı
+    alan(b, 21, 16, 5, 3, "su");
+    bank(b, 19, 17, "tas"); bank(b, 27, 17, "tas");
+    for (const [x, t] of [[4, 2], [12, 3], [33, 2], [42, 3]]) agac(b, x, 15, t);
+    karo(b, 6, 17, 4, 11); karo(b, 7, 17, 5, 11); karo(b, 8, 17, 3, 10);
+    karo(b, 36, 17, 6, 10); karo(b, 37, 17, 7, 11);
+    lamba(b, 16, 15, "park"); lamba(b, 30, 15, "park");
+    uzun(b, 45, 15, 4, 6, 2);
     nokta(b, "solGiris", 1, 10); nokta(b, "sagGiris", 46, 10);
-    b.gezinti = [[2, 9], [10, 10], [18, 9], [26, 10], [33, 9], [44, 10], [6, 18], [15, 18], [22, 18], [30, 19], [40, 18]];
+    b.gezinti = [[2, 9], [10, 10], [18, 9], [26, 10], [33, 9], [44, 10], [6, 18], [15, 18], [19, 19], [30, 19], [40, 18]];
     cikis(b, "sol", "lale", "sagGiris"); cikis(b, "sag", "avlu", "solGiris");
     return b;
   }
 
   // ---------- Avlu Stadı önü ----------
   function avlu() {
-    const b = yeniBolge("avlu", "Avlu Stadı", 48, 20, "kaldirim");
-    doldur(b, 0, 0, 48, 2, "cakil"); yol(b, 12); doldur(b, 0, 15, 48, 5, "cim");
-    bina(b, { x: 1, y: 3, gen: 6, kat: 5, tur: "gri", kapi: { x: 3, ad: "Kalvar Spor kulüp binası", hedef: "kulup" }, tabela: "KALVAR SPOR" });
-    // Stadyum: uzun gri duvar, ortada giriş kapısı
-    bina(b, { x: 9, y: 2, gen: 20, cati: 3, kat: 4, tur: "gri", kapi: { x: 18, ad: "Avlu Stadı", hedef: "stad" }, pencere: "yok", tabela: "AVLU STADI", kapiTur: "cam" });
-    // Eski cezaevi duvarı ve gözetleme kulesi
-    bina(b, { x: 31, y: 4, gen: 16, cati: 1, kat: 3, tur: "gri", pencere: "yok" });
-    bina(b, { x: 38, y: 0, gen: 2, cati: 2, kat: 6, tur: "gri", pencere: "kule" });
-    karo(b, 33, 8, 9, 14); // eski cezaevi tabelası
-    for (const x of [8, 24, 30, 36, 46]) lamba(b, x, 8);
-    // Otobüs durağı
-    uzun(b, 6, 14, 9, 14, 2); karo(b, 8, 15, 12, 15); bank(b, 9, 16);
-    for (const [x, t] of [[2, 0], [14, 1], [22, 2], [30, 0], [37, 1], [44, 2]]) agac(b, x, 16, t);
-    cit(b, 16, 18, 12);
-    nokta(b, "solGiris", 1, 10); nokta(b, "kulupOnu", 3, 10); nokta(b, "durak", 7, 16);
+    const b = yeniBolge("avlu", "Avlu Stadı", 48, 20);
+    sokak(b, [8, 40], "cim");
+    for (const [x, t] of [[1, 0], [5, 1], [30, 1], [34, 0], [43, 1], [46, 0]]) agac(b, x, 0, t);
+    bina(b, { x: 1, gen: 6, kat: 3, tur: "kirmizi", kolon: true, pencere: "kare", kapi: { x: 3, ad: "Kalvar Spor kulüp binası", hedef: "kulup" }, kapiTur: "cam", tabela: "KALVAR SPOR" });
+    // Stadyum: uzun cephe, ortada demir kapı; tribünlerin arasından saha görünür
+    bina(b, { x: 9, gen: 20, cati: 5, kat: 3, tur: "turuncu", kolon: true, pencere: "kemer", catiTur: "saha", kapi: { x: 18, ad: "Avlu Stadı", hedef: "stad" }, kapiTur: "metal", tabela: "AVLU STADI" });
+    // Eski cezaevinin duvarı ve gözetleme kulesi
+    bina(b, { x: 31, gen: 16, kat: 2, tur: "turuncuSade", pencere: "yok" });
+    bina(b, { x: 38, gen: 2, kat: 5, tur: "turuncu", pencere: "dar" });
+    for (const x of [14, 24, 30, 36, 46]) lamba(b, x, 9);
+    // Otobüs durağı: tabela ve bank
+    uzun(b, 7, 8, 4, 6, 2); bank(b, 8, 8);
+    cit(b, 16, 18, 12, "tel");
+    for (const [x, t] of [[2, 0], [14, 1], [22, 0], [30, 1], [37, 0], [44, 1]]) agac(b, x, 15, t);
+    for (const [x, t] of [[6, 4], [11, 6], [33, 4], [41, 6]]) agac(b, x, 19, t);
+    nokta(b, "solGiris", 1, 10); nokta(b, "kulupOnu", 3, 10); nokta(b, "durak", 7, 10);
     b.gezinti = [[3, 10], [12, 10], [20, 9], [28, 10], [36, 9], [44, 10], [10, 17], [20, 16], [34, 17]];
     cikis(b, "sol", "carsi", "sagGiris");
     return b;
@@ -121,18 +168,19 @@ const SEHIR = (() => {
   // ---------- Ova kenarı ----------
   function ova() {
     const b = yeniBolge("ova", "Ova kenarı", 44, 20, "cim");
-    // Toprak yol sağdan sola kıvrılarak gider
-    for (let x = 0; x < 44; x++) {
-      const y = 9 + Math.round(Math.sin(x / 6) * 2);
-      b.zemin[y][x] = Z.yolUst; b.zemin[y + 1][x] = Z.yolOrta; b.zemin[y + 2][x] = Z.yolAlt;
-    }
-    bina(b, { x: 4, y: 1, gen: 6, kat: 4, tur: "tugla", kapi: { x: 6, ad: "Ova Yolu 12 (bahçeli ev)", hedef: "ev:bahceli" } });
-    cit(b, 2, 7, 3); cit(b, 10, 7, 3);
-    // Tarlalar
-    doldur(b, 16, 1, 10, 5, "tarla"); doldur(b, 28, 14, 12, 5, "tarla");
-    for (let x = 16; x < 26; x++) karo(b, x, 6, 20, 14, true);
-    for (const [x, y, t] of [[1, 14, 0], [5, 15, 1], [10, 13, 2], [13, 16, 0], [20, 15, 1], [27, 2, 2], [31, 1, 0], [36, 3, 1], [40, 1, 2], [42, 14, 0]]) agac(b, x, y, t);
-    bank(b, 18, 13); bank(b, 34, 8); karo(b, 24, 13, 16, 13);
+    alan(b, 0, 8, 44, 3, "bej", { sol: false, sag: false }); // taş yol
+    bina(b, { x: 4, taban: 7, gen: 6, kat: 2, tur: "kirmizi", kapi: { x: 6, ad: "Ova Yolu 12 (bahçeli ev)", hedef: "ev:bahceli" } });
+    cit(b, 1, 7, 3); cit(b, 10, 7, 3);
+    // Korular, gölet ve dağınık ağaçlar
+    koru(b, 11, 0); koru(b, 16, 1); koru(b, 21, 2); koru(b, 31, 0); koru(b, 37, 2); koru(b, 39, 15); koru(b, 16, 16);
+    alan(b, 27, 13, 10, 5, "su");
+    // Meyve bahçesi: sıra sıra kısa ağaçlar, önünde ahşap çit
+    for (const y of [13, 16]) for (const x of [2, 5, 9, 12]) agac(b, x, y, 1);
+    cit(b, 1, 12, 5); cit(b, 9, 12, 5);
+    for (const [x, y, t] of [[20, 14, 0], [27, 3, 1], [42, 1, 0], [24, 16, 0], [43, 12, 1]]) agac(b, x, y, t);
+    for (const [x, y, t] of [[15, 12, 6], [38, 12, 4], [25, 6, 5], [2, 4, 6], [1, 1, 4], [14, 4, 4], [35, 6, 4], [21, 12, 5], [26, 18, 4], [37, 19, 6], [1, 19, 4], [7, 19, 6], [12, 19, 4]]) agac(b, x, y, t);
+    bank(b, 17, 12); bank(b, 34, 7); bank(b, 30, 12); bank(b, 26, 15);
+    lamba(b, 14, 6, "park"); lamba(b, 26, 6, "park"); lamba(b, 38, 6, "park");
     nokta(b, "sagGiris", 42, 10);
     b.gezinti = [[40, 10], [32, 9], [24, 11], [14, 10], [6, 11], [8, 16], [22, 17]];
     b.huzur = true; // burada yürümek stresi azaltır

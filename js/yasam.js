@@ -69,7 +69,9 @@ const YASAM = (() => {
       const kadin = rnd() < 0.5;
       if (kadin) g.sakal = 0;
       const ad = kadin ? ISIMLER_K[koken][Math.floor(rnd() * ISIMLER_K[koken].length)] : ISIMLER[koken].ad[Math.floor(rnd() * ISIMLER[koken].ad.length)];
-      liste.push({ id: "k" + i, ad, img: resim(g, taraftar ? kulup.forma : null), ...rastgeleNokta(b, rnd), rol: taraftar ? "taraftar" : "kasabali", hiz: 22 + rnd() * 14 });
+      // Taraftar kulüp formasıyla (bizim karakterler), kasabalı Urban paketinin yürüyen kasabalılarından (1 ve 5 kadın)
+      const urban = taraftar ? null : kadin ? [1, 5][Math.floor(rnd() * 2)] : [0, 2, 3, 4][Math.floor(rnd() * 4)];
+      liste.push({ id: "k" + i, ad, img: resim(g, taraftar ? kulup.forma : null), urban, ...rastgeleNokta(b, rnd), rol: taraftar ? "taraftar" : "kasabali", hiz: 22 + rnd() * 14 });
     }
     return liste;
   }

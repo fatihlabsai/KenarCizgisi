@@ -9,8 +9,11 @@ Oyunda kullanılan her hazır grafiğin, sesin ve yazı tipinin kaynağı ve lis
 | `assets/kenney/sehir.png` | [Roguelike Modern City](https://kenney.nl/assets/roguelike-modern-city) | Kenney | CC0 |
 | `assets/kenney/ic-mekan.png` | [Roguelike Indoors](https://kenney.nl/assets/roguelike-indoors) | Kenney | CC0 |
 | `assets/kenney/karakter.png` | [Roguelike Characters](https://kenney.nl/assets/roguelike-characters) | Kenney | CC0 |
+| `assets/kenney/urban.png` | [RPG Urban Pack](https://kenney.nl/assets/rpg-urban-pack) | Kenney | CC0 |
 
-- Bu üç paket 16×16 karolardan oluşuyor, karolar arasında 1 piksel boşluk var.
+- Bu paketler 16×16 karolardan oluşuyor, karolar arasında 1 piksel boşluk var.
+- Kalvar'ın sokakları (binalar, yollar, ağaçlar, arabalar, kasabalılar) RPG Urban Pack ile çiziliyor. İç mekânlar Roguelike Indoors ile çiziliyor.
+- Arabalar yandan görünsün diye yukarıdan çizilmiş araba karoları 90° döndürülüyor. Tente ve bazı araba renkleri tonu kaydırılarak elde ediliyor.
 - CC0 lisansında kredi vermek zorunlu değil, yine de oyunun jenerik ekranında "Grafikler: Kenney (kenney.nl)" yazacak.
 - Lisans metni: `assets/kenney/LICENSE-kenney.txt`
 
