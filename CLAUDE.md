@@ -119,9 +119,9 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
 - Boş bir depoda sürüm oluşturulamıyor ("Repository is empty"). Bu yüzden yayın deposuna ilk kayıt olarak README eklendi.
 
 ## Durum (24.10.2026)
-- **Yayında olan son sürüm v0.2.0 (İlk hafta).**
+- **Yayında olan son sürüm v0.3.0 (Sezon).**
 - Aşama 0, karakter oluşturma ve Aşama 1 (v0.2.0) bitti.
-- **Aşama 2 bitti (v0.3.0, henüz yayınlanmadı):**
+- **Aşama 2 bitti (v0.3.0, yayında):**
   - Görsel taktik ekranı: maç öncesi ve maç içi, sürükle-bırak, 4 talimat, 3 görev, rakip analizi.
   - Maç motoru: talimatlar, kaptan etkisi, penaltı (görevli atar), duran top asisti, sakatlık, eksik kalma, yer değiştirme.
   - Carceria Ligi: 27 hafta, puan tablosu, fikstür, gol krallığı, kart cezaları, baraj, yeni sezon (yaşlanma, emeklilik, sözleşmesi bitenler, altyapıdan gençler).
