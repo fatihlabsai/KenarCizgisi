@@ -1,6 +1,7 @@
 // Oyun durumu, yeni kariyer, kayıt yuvaları ve oyun ekranı.
-const KAYIT_SURUMU = 1;
+const KAYIT_SURUMU = 2;
 const YUVA_SAYISI = 3;
+const BASLANGIC_TARIHI = "2026-07-27"; // Pazartesi, ilk antrenman günü
 
 let S = null; // oyunun tüm durumu; kayıt dosyasına olduğu gibi yazılır
 
@@ -11,17 +12,38 @@ const MEMLEKETLER = [
 ];
 
 function yeniDurum(ad, soyad, memleket, yuva, gorunus) {
-  return {
+  const S2 = {
     v: KAYIT_SURUMU,
     yuva,
     kayitZamani: 0,
+    tohum: Math.floor(Math.random() * 1e9),
+    kulupId: "kalvar",
     menajer: { ad, soyad, memleket, gorunus: { ...(gorunus || KARAKTER.VARSAYILAN) } },
-    kulup: { id: "kalvar", ad: "Kalvar Spor", forma: "#c8a640", sort: "#2b2f3a" },
     ev: { adres: "Lale Sokak No 4", sehir: "Kalvar", kiraKulupten: 3 },
-    tarih: "2026-07-01",
+    tarih: BASLANGIC_TARIHI,
     para: 1840,
     maas: 2400,
   };
+  return guncelDurum(S2);
+}
+
+// Eksik alanları tamamlar. v1 kayıtları (Aşama 0) da bu yolla yeni sürüme geçer.
+function guncelDurum(k) {
+  if (!k.tohum) k.tohum = Math.floor(Math.random() * 1e9);
+  k.kulupId ||= "kalvar";
+  delete k.kulup;
+  k.menajer.enerji ??= 80;
+  k.menajer.stres ??= 20;
+  k.itibar ||= { yonetim: 50, taraftar: 50 };
+  if (!k.takimlar) DUNYA.kur(k);
+  k.gun ||= { asama: "sabah" };
+  k.maclar ||= [];
+  k.gazeteler ||= [];
+  k.basin ||= [];
+  k.bilinen ||= {};
+  k.gunluk ||= [];
+  k.v = KAYIT_SURUMU;
+  return k;
 }
 
 // ---------- Kayıt yuvaları ----------
@@ -31,7 +53,7 @@ async function yuvalariOku() {
   const liste = [];
   for (let n = 1; n <= YUVA_SAYISI; n++) {
     const k = await DEPO.oku(yuvaAdi(n));
-    liste.push(k && k.v === KAYIT_SURUMU ? k : null);
+    liste.push(k && k.v >= 1 && k.v <= KAYIT_SURUMU ? k : null);
   }
   return liste;
 }
@@ -46,8 +68,8 @@ async function kaydet(sessiz = false) {
 
 async function yukle(n) {
   const k = await DEPO.oku(yuvaAdi(n));
-  if (!k || k.v !== KAYIT_SURUMU) { ARAYUZ.bildirim("Bu kayıt açılamadı"); return; }
-  S = k;
+  if (!k || !(k.v >= 1 && k.v <= KAYIT_SURUMU)) { ARAYUZ.bildirim("Bu kayıt açılamadı"); return; }
+  S = guncelDurum(k);
   S.yuva = n;
   ARAYUZ.pencereKapat();
   oyunEkrani();
@@ -57,7 +79,7 @@ function yuvaSatiri(k, n, dugmeler) {
   if (!k) return `<div class="yuva yuva-bos"><div><b>Yuva ${n} · Boş</b></div><div>${dugmeler}</div></div>`;
   const ne = new Date(k.kayitZamani).toLocaleString("tr-TR", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
   return `<div class="yuva"><div><b>${kacir(k.menajer.ad)} ${kacir(k.menajer.soyad)}</b>
-    <span>${kacir(k.kulup.ad)} · ${TARIH.kisa(k.tarih)} · kaydedildi: ${ne}</span></div><div>${dugmeler}</div></div>`;
+    <span>${kacir(kulupBul(k.kulupId || "kalvar").ad)} · ${TARIH.kisa(k.tarih)} · kaydedildi: ${ne}</span></div><div>${dugmeler}</div></div>`;
 }
 
 // mod: "yukle" (kayıt aç) ya da "yeni" (yeni kariyer için yuva seç)
@@ -135,14 +157,14 @@ async function basvur() {
 function mektupEkrani() {
   ARAYUZ.ekranGoster("ekran-mektup");
   ARAYUZ.escYoksa = () => { S = null; gorunusAdimi(); };
-  $("mektup-tarih").textContent = "28 Haziran 2026";
+  $("mektup-tarih").textContent = "24 Temmuz 2026";
   const m = S.menajer;
   $("mektup-metin").innerHTML = `
     <p>Sayın ${kacir(m.ad)} ${kacir(m.soyad)},</p>
     <p>Yönetim kurulumuz dün akşam toplandı ve teknik direktörlük için sizinle anlaşma kararı aldı.</p>
     <p>Bütçemiz büyük değil, bunu baştan söyleyeyim: aylık ${para(S.maas)} maaş, bir yıllık sözleşme. Lale Sokak'ta kulübün tuttuğu bir daire var. İlk üç ayın kirası bizden.</p>
     <p>Geçen sezonu dokuzuncu bitirdik. Taraftar küme düşmemek istiyor, ben biraz daha fazlasını.</p>
-    <p>Antrenmanlar 6 Temmuz Pazartesi başlıyor.</p>
+    <p>Antrenmanlar 27 Temmuz Pazartesi başlıyor. İlk hazırlık maçımız 1 Ağustos Cumartesi, Avlu'da Tessel Lokomotiv'le.</p>
     <p class="imza">Avluda görüşmek üzere,<br>Ilian Dorsa<br><span class="soluk">Kalvar Spor Başkanı</span></p>`;
 }
 
@@ -152,30 +174,20 @@ async function imzala() {
 }
 
 // ---------- Oyun ekranı ----------
-function hudYenile() {
-  $("hud-kulup").textContent = S.kulup.ad;
-  $("hud-tarih").textContent = TARIH.uzun(S.tarih);
-  $("hud-para").textContent = para(S.para);
-  $("hud-yer").textContent = `${S.ev.adres} · ${S.ev.sehir}`;
-}
-
 function oyunEkrani() {
-  ARAYUZ.ekranGoster("ekran-oyun");
-  ARAYUZ.escYoksa = duraklat;
+  const menajer = KARAKTER.gorunus(S.menajer.gorunus);
   SAHNE_DAIRE.metinAyarla(() => `Hesap: ${para(S.para)} · Maaşa ${TARIH.ayBasinaKalan(S.tarih)} gün var`);
-  SAHNE_DAIRE.menajerAyarla(KARAKTER.gorunus(S.menajer.gorunus));
-  CIZICI.goster($("tuval-oyun"), SAHNE_DAIRE, { mod: "sigdir", kap: document.querySelector(".oyun-orta") });
-  hudYenile();
+  SAHNE_DAIRE.menajerAyarla(menajer);
+  SAHNE_SOKAK.menajerAyarla(menajer);
+  HAFTA.goster();
 }
 
-async function gunuBitir() {
-  S.tarih = TARIH.ekle(S.tarih, 1);
-  if (TARIH.ayinIlkGunu(S.tarih)) {
-    S.para += S.maas;
-    ARAYUZ.bildirim(`Maaş yattı: ${para(S.maas)}`);
-  }
-  hudYenile();
-  await kaydet(true);
+function gazeteArsivi() {
+  if (!S.gazeteler.length) { ARAYUZ.bildirim("Henüz gazete çıkmadı"); return; }
+  const liste = S.gazeteler.slice().reverse().map((g, i) => `<button class="antrenman-sec" data-i="${S.gazeteler.length - 1 - i}"><b>${kacir(g.manset)}</b><span>Sayı ${g.sayi} · ${TARIH.kisa(g.tarih)}</span></button>`).join("");
+  TAM.ac(`<div class="tam-baslik"><h2>Sınır Postası arşivi</h2><button class="dugme ikincil" id="arsiv-kapat">Kapat</button></div><div class="antrenmanlar">${liste}</div>`, null);
+  $("arsiv-kapat").onclick = TAM.kapat;
+  document.querySelectorAll("#oyun-tam [data-i]").forEach((b) => { b.onclick = () => GAZETE.goster(S.gazeteler[+b.dataset.i]); });
 }
 
 function duraklat() {
@@ -230,6 +242,8 @@ async function menuyuKur() {
   ARAYUZ.pencereKapat();
   ARAYUZ.ekranGoster("ekran-menu");
   ARAYUZ.escYoksa = null;
+  $("oyun-tam").hidden = true;
+  SAHNE_ANTRENMAN.kur();
   CIZICI.goster($("tuval-menu"), SAHNE_ANTRENMAN, { mod: "kapla", kap: $("ekran-menu"), balon: false });
 
   const yuvalar = await yuvalariOku();
@@ -285,7 +299,8 @@ $("yeni-devam").onclick = kimlikDevam;
 $("mektup-geri").onclick = () => { S = null; gorunusAdimi(); };
 $("mektup-imza").onclick = imzala;
 $("oyun-menu").onclick = duraklat;
-$("oyun-gun").onclick = gunuBitir;
+$("oyun-kadro").onclick = () => KADRO.listeAc(null);
+$("oyun-gazeteler").onclick = gazeteArsivi;
 
 // Pencere kapatılırken oyun açıksa kaydet
 if (MASAUSTU) window.masaustu.kapanirken(() => { if (S) kaydet(true); });

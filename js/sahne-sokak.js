@@ -98,7 +98,8 @@ const SAHNE_SOKAK = (() => {
     }
   }
 
-  function balon() { return { x: menajer.x, y: menajer.y - 12, metin: "Ev: Lale Sk. No 4, kira ₡620" }; }
+  function balon() { return null; }
+  const menajerAyarla = (img) => { if (menajer) menajer.img = img; };
 
-  return { ad: "Sokak", alt: "Kalvar, Lale Sokak · Akşam", kur, guncelle, ciz, balon };
+  return { ad: "Sokak", alt: "Kalvar, Lale Sokak", kur, guncelle, ciz, balon, menajerAyarla };
 })();

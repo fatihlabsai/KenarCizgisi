@@ -1,20 +1,22 @@
-// Sahne çizici: etkin sahneyi 320×192 çözünürlükte çizer ve tam sayı katıyla büyütür.
+// Sahne çizici: etkin sahneyi kendi küçük çözünürlüğünde (varsayılan 320×192) çizer ve tam sayı katıyla büyütür.
 // "kapla" ekranı taşarak doldurur (ana menü), "sigdir" çerçevenin içine sığdırır (oyun).
+// Sahne isterse büyütülmüş tuvale ayrıca yazı çizebilir: balon() ya da ustCiz(ctx, olcek).
 const CIZICI = (() => {
-  const G = 320, Y = 192;
   const kucuk = document.createElement("canvas");
-  kucuk.width = G; kucuk.height = Y;
   const kctx = kucuk.getContext("2d");
-  kctx.imageSmoothingEnabled = false;
 
-  let hedef = null, olcek = 3, son = 0;
+  let hedef = null, olcek = 3, son = 0, G = 320, Y = 192;
 
   function goster(tuval, sahne, { mod = "sigdir", kap, balon = true } = {}) {
     hedef = { tuval, ctx: tuval.getContext("2d"), sahne, mod, kap: kap || tuval.parentElement, balon };
+    G = sahne.G || 320; Y = sahne.Y || 192;
+    kucuk.width = G; kucuk.height = Y;
+    kctx.imageSmoothingEnabled = false;
     boyutla();
   }
 
   function durdur() { hedef = null; }
+  const etkin = () => hedef && hedef.sahne;
 
   function boyutla() {
     if (!hedef) return;
@@ -22,26 +24,26 @@ const CIZICI = (() => {
     if (!r.width || !r.height) return;
     olcek = hedef.mod === "kapla"
       ? Math.max(1, Math.ceil(Math.max(r.width / G, r.height / Y)))
-      : Math.max(1, Math.floor(Math.min((r.width - 24) / G, (r.height - 24) / Y)));
+      : Math.max(1, Math.floor(Math.min((r.width - 12) / G, (r.height - 12) / Y)));
     hedef.tuval.width = G * olcek;
     hedef.tuval.height = Y * olcek;
     hedef.ctx.imageSmoothingEnabled = false;
   }
 
   // Konuşma balonu: yazı büyütülmüş tuvale doğrudan yazılır, böylece keskin kalır.
-  function konusma(ctx, b) {
+  function konusma(ctx, b, o = olcek) {
     if (!b) return;
-    const yazi = Math.round(7 * olcek);
+    const yazi = Math.round(7 * o);
     ctx.font = `${yazi}px "Jersey 10", sans-serif`;
-    const w = ctx.measureText(b.metin).width + 8 * olcek;
-    const h = yazi + 5 * olcek;
-    let x = Math.round(b.x * olcek - w / 2);
-    const y = Math.round(b.y * olcek - h);
+    const w = ctx.measureText(b.metin).width + 8 * o;
+    const h = yazi + 5 * o;
+    let x = Math.round(b.x * o - w / 2);
+    const y = Math.max(2, Math.round(b.y * o - h));
     x = Math.max(4, Math.min(ctx.canvas.width - w - 4, x));
-    ctx.fillStyle = "#000"; ctx.fillRect(x + olcek, y + olcek, w, h);
-    ctx.fillStyle = "#efe6d2"; ctx.fillRect(x, y, w, h);
-    ctx.fillStyle = "#22201c"; ctx.textBaseline = "middle";
-    ctx.fillText(b.metin, x + 4 * olcek, y + h / 2 + olcek * 0.5);
+    ctx.fillStyle = "#000"; ctx.fillRect(x + o, y + o, w, h);
+    ctx.fillStyle = b.renk || "#efe6d2"; ctx.fillRect(x, y, w, h);
+    ctx.fillStyle = b.yaziRenk || "#22201c"; ctx.textBaseline = "middle";
+    ctx.fillText(b.metin, x + 4 * o, y + h / 2 + o * 0.5);
   }
 
   function dongu(z) {
@@ -53,7 +55,11 @@ const CIZICI = (() => {
       kctx.clearRect(0, 0, G, Y);
       sahne.ciz(kctx);
       ctx.drawImage(kucuk, 0, 0, G * olcek, Y * olcek);
-      if (hedef.balon && sahne.balon) konusma(ctx, sahne.balon());
+      if (hedef.balon && sahne.balon) {
+        const b = sahne.balon();
+        (Array.isArray(b) ? b : [b]).forEach((x) => konusma(ctx, x));
+      }
+      if (sahne.ustCiz) sahne.ustCiz(ctx, olcek);
     }
     requestAnimationFrame(dongu);
   }
@@ -61,5 +67,5 @@ const CIZICI = (() => {
   addEventListener("resize", boyutla);
   requestAnimationFrame(dongu);
 
-  return { goster, durdur, boyutla };
+  return { goster, durdur, boyutla, etkin, konusma };
 })();

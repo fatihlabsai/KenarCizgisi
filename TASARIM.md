@@ -180,11 +180,26 @@ Her gün **gündüz kulüpte**, **akşam hayatında** geçer. Akşamları seçim
 | Aşama | İçerik | Bittiğinde |
 |---|---|---|
 | **0. İskelet** ✅ | Proje, pencere, ana menü, kayıt, `.exe` derleme | Boş ama açılan bir oyun |
-| **1. İlk dilim** | 1 kulüp, 1 hafta: antrenman sahnesi → 2D maç → maaş → daire → gazete | Oyunun hissi görülür |
+| **1. İlk dilim** ✅ | 1 kulüp, 1 hafta: antrenman sahnesi → 2D maç → maaş → daire → gazete | Oyunun hissi görülür |
 | **2. Sezon** | Carceria Ligi, fikstür, puan tablosu, kadro ve taktik, basit transfer | Bir sezon baştan sona oynanır |
 | **3. Hayat** | Ev ve araba, yatırımlar, şehir haritası, ilişkiler, enerji/stres/itibar | Para gerçekten bir işe yarar |
 | **4. Dünya** | Komşu ligler, Antlaşma Kupası, menajer kariyerleri, Demir Masa | Dünya yaşamaya başlar |
 | **5. Cila** | Ses, müzik, denge, seslendirme | Yayına hazır |
+
+## 9.1 Aşama 1'de verilen kararlar (💡 kullanıcı değiştirebilir)
+- **Takvim:** Kariyer 27 Temmuz 2026 Pazartesi başlıyor. İlk hafta 1 Ağustos Cumartesi'deki hazırlık maçıyla bitiyor, böylece ilk maaş da aynı gün yatıyor.
+- **Hazırlık maçları:** 1 Ağustos Tessel Lokomotiv (ev), 8 Ağustos Kuzey Ovası (deplasman), 15 Ağustos Brennik Atletik (ev), 22 Ağustos Mirov SK (deplasman). Lig 29 Ağustos'ta başlıyor (Aşama 2).
+- **Antrenman:** 6 tür: pas ve rondo, bitiricilik, savunma hattı, duran top, kondisyon, dinlenme.
+  - Gençler daha hızlı gelişir. Yoğun antrenman yorar.
+  - Hocanın enerjisi 30'un altına düşerse antrenmanın verimi azalır.
+- **Maç:** Maç dakika dakika oynanır ve önemli anlar sahada canlandırılır.
+  - Kenardan müdahale: taktik, 3 oyuncu değişikliği ve her yarıda bir kez bağırma.
+- **Basın:** Cuma toplantısında Sınır Postası'ndan Mira Halvor bir soru soruyor. Cevap moral, taraftar ve yönetimi etkiliyor, pazar gazetesinde de alıntılanıyor.
+- **Akşamlar:** Üç seçenek var:
+  - Evde dinlen: enerji toplarsın.
+  - Gözcü Kafe: ₡14. Stres azalır, dedikodu duyulur. Rakibin dizilişi böyle öğrenilebilir.
+  - Bir oyuncuyu yemeğe çağır: ₡60, oyuncunun morali yükselir.
+- **Yeni isimler:** Başkan Ilian Dorsa, muhabir Mira Halvor, Gözcü Kafe ve sahibi Mavro.
 
 ## 10. Açık sorular
 

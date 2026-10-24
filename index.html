@@ -80,16 +80,48 @@
     <header class="hud">
       <div class="hud-kulup"><span class="forma-rengi"></span><span id="hud-kulup"></span></div>
       <div class="hud-tarih" id="hud-tarih"></div>
-      <div class="hud-para" id="hud-para"></div>
+      <div class="hud-sag">
+        <div class="hud-olcu" title="Enerji"><span>Enerji</span><div class="olcu"><i id="hud-enerji"></i></div><b id="hud-enerji-yazi"></b></div>
+        <div class="hud-olcu stres" title="Stres"><span>Stres</span><div class="olcu"><i id="hud-stres"></i></div><b id="hud-stres-yazi"></b></div>
+        <div class="hud-para" id="hud-para"></div>
+      </div>
     </header>
     <main class="oyun-orta">
-      <div class="sahne-cerceve"><canvas class="tuval" id="tuval-oyun"></canvas></div>
+      <div class="oyun-sahne"><div class="sahne-cerceve"><canvas class="tuval" id="tuval-oyun"></canvas></div></div>
+      <aside class="gundem kagit" id="gundem"></aside>
     </main>
     <footer class="hud-alt">
       <span class="soluk" id="hud-yer"></span>
       <div class="dugme-satiri">
         <button class="dugme ikincil" id="oyun-menu">Menü (Esc)</button>
-        <button class="dugme" id="oyun-gun">Günü bitir ▸</button>
+        <button class="dugme ikincil" id="oyun-gazeteler">Gazeteler</button>
+        <button class="dugme ikincil" id="oyun-kadro">Kadro</button>
+      </div>
+    </footer>
+    <!-- Oyun ekranının üstüne açılan büyük kâğıt: kadro, basın, gazete -->
+    <div id="oyun-tam" class="oyun-tam" hidden><div class="kagit tam-kagit" id="oyun-tam-icerik"></div></div>
+  </section>
+
+  <!-- Maç -->
+  <section id="ekran-mac" class="ekran" hidden>
+    <header class="skorbord">
+      <div class="sb-takim sb-ev"><span class="sb-renk" id="sb-ev-renk"></span><span id="sb-ev-ad"></span></div>
+      <div class="sb-skor"><b id="sb-skor">0 - 0</b><span id="sb-dk">0'</span></div>
+      <div class="sb-takim sb-dep"><span id="sb-dep-ad"></span><span class="sb-renk" id="sb-dep-renk"></span></div>
+    </header>
+    <main class="mac-orta">
+      <div class="mac-sahne"><div class="sahne-cerceve"><canvas class="tuval" id="tuval-mac"></canvas></div></div>
+      <aside class="mac-yan kagit">
+        <div class="mac-istat" id="mac-istat"></div>
+        <ol class="mac-akis" id="mac-akis"></ol>
+      </aside>
+    </main>
+    <footer class="mac-alt">
+      <div class="secenekler" id="mac-hiz"></div>
+      <div class="dugme-satiri">
+        <button class="dugme ikincil" id="mac-bagir">Bağır</button>
+        <button class="dugme ikincil" id="mac-taktik">Taktik (Esc)</button>
+        <button class="dugme" id="mac-sonuc">Sonuca geç</button>
       </div>
     </footer>
   </section>
@@ -105,13 +137,23 @@
 
   <script src="js/kaynak.js"></script>
   <script src="js/karakter.js"></script>
+  <script src="js/veri.js"></script>
+  <script src="js/dunya.js"></script>
   <script src="js/sahne-antrenman.js"></script>
   <script src="js/sahne-sokak.js"></script>
   <script src="js/sahne-daire.js"></script>
+  <script src="js/sahne-mac.js"></script>
   <script src="js/depo.js"></script>
   <script src="js/cizici.js"></script>
   <script src="js/arayuz.js"></script>
   <script src="js/gorunus.js"></script>
+  <script src="js/mac-motoru.js"></script>
+  <script src="js/mac-ekrani.js"></script>
+  <script src="js/antrenman.js"></script>
+  <script src="js/hafta.js"></script>
+  <script src="js/kadro.js"></script>
+  <script src="js/basin.js"></script>
+  <script src="js/gazete.js"></script>
   <script src="js/oyun.js"></script>
   <script src="js/ana.js"></script>
 </body>

@@ -161,11 +161,30 @@ const KARAKTER = (() => {
     });
   }
 
+  // Kadrodaki bir oyuncunun formalı resmi. Kaleciler forma rengine göre koyu ya da yeşil giyer.
+  // Kaleci forması saha oyuncularıyla karışmasın: açık yeşil, takımın kendi rengi yeşilse mavi
+  function yesilMi(h) { const [r, g, b] = hex(h); return g > r + 25 && g > b; }
+  function oyuncu(o, kulup) {
+    const g = o.gorunus || {};
+    const sec = (ad, v) => KATALOG[ad][Math.min(KATALOG[ad].length - 1, Math.max(0, v ?? 0))];
+    const ten = sec("ten", g.ten), sr = sec("sacRenk", g.sacRenk), sac = sec("sac", g.sac), sakal = sec("sakal", g.sakal);
+    const kaleci = o.mevki === "KL";
+    const forma = kaleci ? (yesilMi(kulup.forma) ? "#3f8fd6" : "#8fd14f") : kulup.forma;
+    return yap({
+      ten: ten.satir, tenRenk: ten.renk,
+      ust: [10, 0], ustRenk: forma,
+      sort: 2, sortRenk: kaleci ? "#22252b" : kulup.sort,
+      ayakkabi: 0,
+      sac: sac.yer && [sr.s + sac.yer[0], sr.r + sac.yer[1]],
+      sakal: sakal.yer && [sr.s + sakal.yer[0], sr.r + sakal.yer[1]],
+    });
+  }
+
   // Basit, tekrarlanabilir rastgele sayı üreteci (aynı tohum → aynı sonuç).
   function tohumlu(tohum) {
     let s = tohum >>> 0;
     return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
   }
 
-  return { yap, futbolcu, tohumlu, KATALOG, VARSAYILAN, gorunus, rastgeleGorunus };
+  return { yap, futbolcu, oyuncu, tohumlu, KATALOG, VARSAYILAN, gorunus, rastgeleGorunus };
 })();
