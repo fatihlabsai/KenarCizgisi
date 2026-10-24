@@ -1,34 +1,29 @@
-## Kenar Çizgisi v0.3.0 — Sezon
+## Kenar Çizgisi v0.4.0 — Kalvar
 
-Carceria Ligi başladı. Artık bir sezonu baştan sona oynayıp bir sonrakine geçebilirsin.
+Akşamları artık Kalvar'da yürüyorsun. Şehir yaşıyor, para da gerçekten bir işe yarıyor.
 
-**Taktik ekranı**
-- Oyuncuların sahada dizilişe göre görünüyor: forma, numara, ad, kondisyon, görev rozetleri.
-- Sürükle-bırak ya da sırayla iki oyuncuya tıklayarak yer değiştir. Yedekten sahaya da aynı şekilde.
-- Takım talimatları: savunma hattı, pres, pas, genişlik. Maçı gerçekten etkiler.
-- Görevler: kaptan, penaltıcı, korner ve frikik kullanıcısı.
-- Rakip analizi: Gözcü Kafe'de dizilişini öğrendiysen sahada görünür.
-- Aynı ekran devre arasında ve maç sırasında da açılır.
+**Yürünebilir şehir**
+- Oklar ya da WASD ile yürü, fareyle bir yere tıkla. Bir şeyin yanındayken E'ye bas.
+- Dört bölge: Lale Sokak, Çarşı, Avlu Stadı önü, Ova kenarı. Kenardan yürüyerek bir bölgeden ötekine geçilir.
+- İç mekânlar: evin, Gözcü Kafe, Ovalı Lokantası, banka, emlakçı, eşya dükkânı, oto galeri.
+- Akşam hava kararır, lambalar ve pencereler yanar. Kışın yağmur yağabilir.
 
-**Carceria Ligi**
-- 10 takım, 3 devre, 27 hafta. 29 Ağustos'ta başlar, aralık sonunda kış arası, mart sonunda biter.
-- Puan tablosu, fikstür, gol krallığı (alttaki "Lig" düğmesi).
-- Kart cezaları ve sakatlıklar.
-- Son sıradaki takım baraj oynar. Sezon sonunda yaş, emeklilik, sözleşmesi bitenler ve altyapıdan gelen gençlerle yeni sezon başlar.
+**Yaşayan sokaklar**
+- Kasabalılar, taraftarlar ve kendi oyuncuların sokakta dolaşır. Onlarla konuşabilirsin.
+- Taraftarlar maç sonucuna göre, oyuncular morallerine göre konuşur.
+- Gazeteci Mira Halvor'la aran iyileşince sana rakibin eksiklerini fısıldar.
+- Kafede, çarşıda ya da ovada biriyle tanışabilirsin. Gerisi size kalmış.
 
-**Transfer ve sözleşmeler**
-- Transfer dönemi yazın ve ocakta açık.
-- Teklif ver, karşı teklifi değerlendir, oyuncunun menajeriyle maaş ve süre pazarlığı yap.
-- Serbest oyuncular, oyuncuların için gelen teklifler, kulüpler arası transferler.
-- Sözleşmesi biten oyuncular için hatırlatma, oyuncu kartından uzatma.
+**Akşamlar**
+- Akşam 18:00'de başlar, pazarları sabahtan. Her işin bir süresi var.
+- Kafede çay, lokantada yemek, bir oyuncuyu yemeğe çağırmak.
+- Yatağa yatınca gün biter. Geç kalırsan ertesi gün yorgun olursun. Evdeki aynadan görünüşünü değiştirebilirsin.
 
-**Yönetim**
-- Sezon başında Başkan Dorsa'yla hedef ve bütçe toplantısı.
-- Sonuçlar yönetimin güvenini değiştirir. Güven çok düşerse kovulabilirsin.
-- Hedef tutarsa maaşın artar. Kasımdan itibaren kira maaştan düşer.
-
-**Diğer**
-- Penaltılar, duran toplar, maç içinde talimat değişikliği.
-- Gazete artık ligi, puan durumunu ve gerçek transferleri yazıyor.
-- Bütün oyuncular haftalık olarak gelişir ya da yaşlanır, antrenman bunun üstüne eklenir.
-- Eski kayıtlar yeni sürümde açılır.
+**Para ve hayat**
+- Ev kirala ya da satın al. Taşınınca evin içi de değişir.
+- Mobilya al, evinde görünsün.
+- Bisiklet ya da araba al. Araba kapının önünde durur, bölgeler arasında hızlı götürür.
+- Banka: mevduat ve kredi.
+- Yatırım: kiralık daire, arsa, yazlık, Gözcü Kafe'ye ortaklık.
+- "Hayatım" ekranında paran, evin, yatırımların, itibarın ve tanıdıkların.
+- Gazete senin hayatını da yazar.
