@@ -139,13 +139,13 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
      $env:GH_TOKEN = [Environment]::GetEnvironmentVariable('GH_TOKEN','User'); npx electron-builder --win nsis --publish always; Remove-Item Env:GH_TOKEN
      ```
      Token asla ekrana yazdırılmaz.
-  6. Yayın sayfasının gövdesini notlarla GitHub API üzerinden PATCH'le.
+  6. Yayın sayfasının gövdesini notlarla GitHub API üzerinden PATCH'le. PowerShell 5.1'de dosyayı `[IO.File]::ReadAllText` ile oku; `Get-Content -Raw` JSON'a `{"value": ...}` diye giriyor.
   7. `https://github.com/fatihlabsai/KenarCizgisi_surumler/releases/latest/download/latest.yml` adresinin yeni sürümü gösterdiğini doğrula.
 - GH_TOKEN, CARCERIA ile aynı ince ayarlı (fine-grained) anahtar. İzin listesinde iki sürümler deposu da var, Contents izni Read and write.
 - Boş bir depoda sürüm oluşturulamıyor ("Repository is empty"). Bu yüzden yayın deposuna ilk kayıt olarak README eklendi.
 
 ## Durum (24.10.2026)
-- **Yayında olan son sürüm v0.4.0 (Kalvar).**
+- **Yayında olan son sürüm v0.4.1 (Yeni Kalvar ve harita).**
 - Aşama 0, karakter oluşturma, Aşama 1 (v0.2.0) ve Aşama 2 (v0.3.0) bitti.
 - Kullanıcının v0.3.0 geri bildirimi: "Yaşayan bir dünya hissi alamadım, yürüyemiyoruz, dünya genişleyebilir." Aşama 3 bunun üzerine kuruldu.
 - **Aşama 3 bitti (v0.4.0, yayında):**
@@ -165,5 +165,5 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
 - **Aşama 4 başladı (plan onaylandı, TASARIM.md 9.5):**
   - 1. iş bitti: Kalvar RPG Urban Pack ile yeniden kuruldu.
   - 2. iş bitti: M haritası (Kalvar ve ülke). Eski "Arabayla git…" listesinin yerini aldı.
-  - İkisi de henüz yayınlanmadı.
+  - İkisi v0.4.1 ile yayınlandı. Aşama 4 bitince v0.5.0 çıkacak.
   - Sıradaki iş: Carceria City (TASARIM.md 9.5, madde 1).
