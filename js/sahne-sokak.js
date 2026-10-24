@@ -24,9 +24,12 @@ const SAHNE_SOKAK = (() => {
 
   function kur() {
     const rnd = KARAKTER.tohumlu(7);
+    // Kenney'de her arabanın iki çizimi var: 31–33. sütun sola, 34–36. sütun sağa bakıyor.
+    // Satır: 16 yeşil, 20 gri, 24 turuncu. Üst şerit sola, alt şerit sağa gider.
     arabalar = [
-      { x: -40, y: 140, hiz: 38, s: 31, r: 16, gen: 3, yuk: 2 },
-      { x: 360, y: 156, hiz: -30, s: 31, r: 24, gen: 3, yuk: 2 },
+      { x: -60, serit: "alt", hiz: 38, r: 16 },
+      { x: 200, serit: "alt", hiz: 38, r: 20 },
+      { x: 360, serit: "ust", hiz: -30, r: 24 },
     ];
     yayalar = [
       { x: 60, y: 118, hiz: 9, img: KARAKTER.yap({ ten: 2, ust: [6, 0], ustRenk: "#5a7d9a", sort: 0, ayakkabi: 0, sac: [23, 0] }) },
@@ -50,11 +53,11 @@ const SAHNE_SOKAK = (() => {
   }
 
   function ciz(ctx) {
-    // Zemin: kaldırım, yol, kaldırım
-    KAYNAK.doseme(ctx, "sehir", 1, 20, 0, 0, G / T, 9);
-    KAYNAK.doseme(ctx, "sehir", 11, 19, 0, 8.25, G / T, 2);
-    for (let x = 0; x < G / T; x++) KAYNAK.karo(ctx, "sehir", 9, 19, x * T, 8.25 * T + 8);
-    KAYNAK.doseme(ctx, "sehir", 1, 20, 0, 10.25, G / T, 2);
+    // Zemin: kaldırım (0–7. satır), üç karoluk yol (8–10), alt kaldırım (11)
+    KAYNAK.doseme(ctx, "sehir", 1, 20, 0, 0, G / T, 8);
+    KAYNAK.doseme(ctx, "sehir", 11, 19, 0, 8, G / T, 3);
+    for (let x = 0; x < G / T; x++) KAYNAK.karo(ctx, "sehir", 9, 19, x * T, 9 * T);
+    KAYNAK.doseme(ctx, "sehir", 1, 20, 0, 11, G / T, 1);
 
     // Apartman (kırmızı tuğla), kafe (bej), gri iş hanı
     const a = bina(ctx, 1, 0, 7, 2, 5, 0, 0);
@@ -86,13 +89,13 @@ const SAHNE_SOKAK = (() => {
       ctx.restore();
     }
 
-    // Arabalar
-    for (const c of arabalar)
-      for (let y = 0; y < c.yuk; y++)
-        for (let x = 0; x < c.gen; x++) {
-          const sx = c.hiz > 0 ? x : c.gen - 1 - x;
-          KAYNAK.karo(ctx, "sehir", c.s + x, c.r + y, c.x + sx * T, c.y + y * T - 8, c.hiz < 0);
-        }
+    // Arabalar: çizim 3×2 karo, gövde alt karonun dibine oturuyor
+    for (const c of arabalar) {
+      const s = c.hiz > 0 ? 34 : 31;
+      const ust = c.serit === "ust" ? 8 * T - 6 : 9 * T;
+      for (let y = 0; y < 2; y++)
+        for (let x = 0; x < 3; x++) KAYNAK.karo(ctx, "sehir", s + x, c.r + y, c.x + x * T, ust + y * T);
+    }
   }
 
   function balon() { return { x: menajer.x, y: menajer.y - 12, metin: "Ev: Lale Sk. No 4, kira ₡620" }; }
