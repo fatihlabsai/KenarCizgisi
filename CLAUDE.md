@@ -27,6 +27,26 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
 - HTML5 Canvas (sahneler) + HTML/CSS (menüler), derleme adımı olmayan JavaScript.
 - Electron ile Windows `.exe`. CARCERIA'nın kurulum ve yayın düzeni (`C:\Oyunlar\CARCERIA`) örnek alınır.
 
+## Grafikler
+- Kenney Roguelike serisinin üç sayfası `assets/kenney/` altında: `sehir.png`, `ic-mekan.png`, `karakter.png`.
+  - Karolar 16×16, aralarında 1 piksel boşluk var. Koordinatlar (sütun, satır) olarak yazılır.
+  - Çizim: `KAYNAK.karo(ctx, sayfa, s, r, x, y)`.
+- **Karakterler katmanlardan oluşur:** ten (0. sütun, satır 0–2), şort (3), ayakkabı (4), üst (6–17), saç ve sakal (19–26). Birleştirmeyi `KARAKTER.yap(tarif)` yapar.
+  - Forma ve şort renkleri `boya()` ile kulüp rengine çevrilir. Futbolcu formasının temeli (10, 0) tişört karosu.
+- **Bilinen karolar:**
+  - sehir: çim (0,24), kaldırım (1,20), bej zemin (3,19), asfalt (11,19), koni (14,18), tel örgü (17,18), lamba (1,16–18), ağaç ve çalılar (31–36, 10–13)
+  - ic: mutfak (0–9, 12–17), tek kişilik yatak (8–15, 6–7), halı (16–18, 8–11), koltuk (21–22, 4–5)
+
+## Tarayıcıda test
+- `.claude/launch.json` git'e girmiyor. Sunucuyu `python -m http.server 8420` ile başlat, sonra `http://localhost:8420/index.html` adresini aç.
+- Tarayıcı JS dosyalarını önbellekten verebilir. Değişiklikten sonra dosyaları `fetch(url, {cache: "reload"})` ile yenile.
+
+## Git
+- Yerel depo `main` dalında. Kimlik: `fatihlabsai <info@playpofly.com>` (CARCERIA ile aynı).
+- GitHub deposu kullanıcı tarafından açılacak. Açılınca `origin` olarak eklenip push edilecek.
+- Commit mesajlarının sonuna şunu ekle: `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`
+
 ## Durum (24.10.2026)
-- Tasarım belgesinin ilk taslağı yazıldı, kod henüz yok.
-- Sıradaki adım: grafik paketinin seçimi, ardından Aşama 0 (iskelet).
+- Tasarım belgesi yazıldı. Şehir ve kulüp isimleri konuldu (💡 öneri).
+- Grafik denemesi (`index.html`) hazır: antrenman sahası, sokak ve ev. Kullanıcının bakıp onaylaması bekleniyor.
+- Sıradaki adım: Aşama 0, yani Electron, ana menü, kayıt ve `.exe`.
