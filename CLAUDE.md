@@ -133,10 +133,10 @@ Piksel sanatlı futbol menajerliği oyunu. CARCERIA evreninde, 2026'da geçiyor.
 - Boş bir depoda sürüm oluşturulamıyor ("Repository is empty"). Bu yüzden yayın deposuna ilk kayıt olarak README eklendi.
 
 ## Durum (24.10.2026)
-- **Yayında olan son sürüm v0.3.0 (Sezon).**
+- **Yayında olan son sürüm v0.4.0 (Kalvar).**
 - Aşama 0, karakter oluşturma, Aşama 1 (v0.2.0) ve Aşama 2 (v0.3.0) bitti.
 - Kullanıcının v0.3.0 geri bildirimi: "Yaşayan bir dünya hissi alamadım, yürüyemiyoruz, dünya genişleyebilir." Aşama 3 bunun üzerine kuruldu.
-- **Aşama 3 bitti (v0.4.0, henüz yayınlanmadı):**
+- **Aşama 3 bitti (v0.4.0, yayında):**
   - Yürünebilir Kalvar: Lale Sokak, Çarşı, Avlu Stadı önü, Ova kenarı ve 9 iç mekân.
   - Akşam saati, gece ışıkları, yağmur, yürüyen insanlar, arabalar.
   - Tanıdıklar ve konuşmalar: taraftarlar maç sonucuna göre konuşur, oyuncular moraline göre. Gazeteci ilişki arttıkça gerçek kulis verir.
