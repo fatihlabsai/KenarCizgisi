@@ -7,7 +7,8 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "dist": "electron-builder --win nsis"
+    "dist": "electron-builder --win nsis",
+    "release": "electron-builder --win nsis --publish always"
   },
   "build": {
     "appId": "com.fatihlabsai.kenarcizgisi",
@@ -36,6 +37,17 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "Kenar Çizgisi"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "fatihlabsai",
+        "repo": "KenarCizgisi_surumler",
+        "releaseType": "release"
+      }
+    ],
+    "releaseInfo": {
+      "releaseNotesFile": "build/release-notes.md"
     }
   },
   "devDependencies": {

@@ -248,8 +248,32 @@ async function menuyuKur() {
   ekle("Kayıtlar", () => kayitPenceresi("yukle"), "", !yuvalar.some(Boolean));
   ekle("Ayarlar", () => ayarlarPenceresi(ARAYUZ.pencereKapat));
   if (MASAUSTU) ekle("Çıkış", () => window.masaustu.cik());
-  $("menu-surum").textContent = MASAUSTU ? "v" + (await window.masaustu.surum()) : "tarayıcı denemesi";
+  if (MASAUSTU) guncellemeGoster(await window.masaustu.guncellemeDurum());
+  else $("menu-surum").textContent = "tarayıcı denemesi";
 }
+
+// Ana menünün sağ altında sürüm ve güncelleme durumu
+let surumNo = "";
+async function guncellemeGoster(d) {
+  if (!MASAUSTU) return;
+  if (!surumNo) surumNo = await window.masaustu.surum();
+  const yazi = {
+    var: `Yeni sürüm iniyor: v${d.surum}`,
+    iniyor: `Yeni sürüm iniyor: %${d.yuzde || 0}`,
+    hazir: `v${d.surum} hazır. Oyunu kapatınca kurulacak.`,
+  }[d && d.durum];
+  const el = $("menu-surum");
+  el.innerHTML = kacir(yazi ? `v${surumNo} · ${yazi}` : `v${surumNo}`);
+  if (d && d.durum === "hazir") {
+    const b = document.createElement("button");
+    b.className = "dugme";
+    b.textContent = "Şimdi kur";
+    b.style.marginLeft = "12px";
+    b.onclick = async () => { if (S) await kaydet(true); window.masaustu.guncellemeKur(); };
+    el.appendChild(b);
+  }
+}
+if (MASAUSTU) window.masaustu.guncellemeDinle(guncellemeGoster);
 
 // ---------- Düğmeler ----------
 $("yeni-geri").onclick = menuyuKur;

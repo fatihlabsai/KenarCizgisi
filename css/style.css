@@ -73,7 +73,8 @@ html, body {
 .menu-dugmeler button[disabled] { color: #5b5e66; cursor: default; }
 .menu-dugmeler button[disabled]::before { width: 0; }
 .menu-dugmeler small { display: block; font-size: 18px; color: var(--soluk); margin-top: -4px; }
-.menu-surum { position: absolute; right: 20px; bottom: 12px; margin: 0; font-size: 18px; color: var(--soluk); }
+.menu-surum { position: absolute; right: 20px; bottom: 12px; margin: 0; font-size: 18px; color: var(--soluk); display: flex; align-items: center; }
+.menu-surum .dugme { font-size: 20px; padding: 3px 14px 5px; }
 
 /* ---------- Kâğıt ekranları ---------- */
 .kagit-ekran { display: flex; align-items: center; justify-content: center; padding: 24px; background: var(--zemin) repeating-linear-gradient(0deg, transparent 0 3px, rgba(255, 255, 255, 0.015) 3px 4px); }
