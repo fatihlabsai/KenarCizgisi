@@ -1,0 +1,76 @@
+:root {
+  --zemin: #1b1d22;
+  --kagit: #efe6d2;
+  --murekkep: #22201c;
+  --hardal: #c8a640;
+  --soluk: #8d877a;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--zemin);
+  color: var(--kagit);
+  font-family: "Jersey 10", system-ui, sans-serif;
+  letter-spacing: 0.5px;
+}
+
+body { display: flex; flex-direction: column; }
+
+.ust {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 20px;
+  border-bottom: 2px solid #2c2f36;
+}
+
+.logo { font-size: 34px; color: var(--hardal); line-height: 1; }
+
+#sekmeler { display: flex; gap: 6px; }
+
+#sekmeler button {
+  font: inherit;
+  font-size: 22px;
+  padding: 4px 14px;
+  background: transparent;
+  color: var(--soluk);
+  border: 2px solid #2c2f36;
+  cursor: pointer;
+}
+
+#sekmeler button[aria-pressed="true"] { color: var(--murekkep); background: var(--kagit); border-color: var(--kagit); }
+#sekmeler button:hover:not([aria-pressed="true"]) { color: var(--kagit); }
+
+.sahne-alani {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  min-height: 0;
+}
+
+.sahne-cerceve { position: relative; border: 3px solid var(--kagit); box-shadow: 6px 6px 0 #000; }
+
+#tuval { display: block; image-rendering: pixelated; }
+
+.sahne-baslik {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 6px 12px 8px;
+  background: var(--kagit);
+  color: var(--murekkep);
+  font-size: 26px;
+  line-height: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.sahne-baslik small { font-size: 18px; color: #5d574b; }
+
+.alt { padding: 8px 20px; font-size: 18px; color: var(--soluk); text-align: center; }
